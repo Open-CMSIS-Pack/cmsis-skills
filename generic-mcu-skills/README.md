@@ -30,6 +30,12 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 | [`resolve-official-device-documentation`](skills/bring-up/resolve-official-device-documentation/SKILL.md) | Recover a traceable official vendor source for an unavailable device document. | |
 | [`trace-knowledge`](skills/bring-up/trace-knowledge/SKILL.md) | Build a documented, reviewable record of an SoC's CoreSight trace topology and operating requirements. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md` when trace evidence needs reusable access facts</li><li>Output: `.agent-artifacts/{pdsc-stem}.trace-knowledge.md`: verified trace paths, constraints, and readiness state</li></ul> |
 
+### Ethos-U
+
+| Skill | Purpose | Artifacts |
+| --- | --- | --- |
+| [`evaluate-ethos-u-variants`](skills/ethos-u/evaluate-ethos-u-variants/SKILL.md) | Compare Vela memory requirements and estimated performance for a quantized model across Ethos-U configurations. | <ul><li>Input: pre-trained quantized `.tflite` or `.tosa` model</li><li>Output: `.agent-artifacts/ethos-u-evaluation/&lt;model&gt;-&lt;timestamp&gt;/comparison.md` and `comparison.csv`</li></ul> |
+
 ### Pack
 
 | Skill | Purpose | Artifacts |
@@ -90,6 +96,7 @@ Skills are grouped by their primary purpose:
 | `skills/project/` | Create, inspect, convert, or manage MCU projects. |
 | `skills/bring-up/` | Establish basic device and board operation, including an initial debug connection. |
 | `skills/debug/` | Configure and verify debug, trace, and runtime analysis. |
+| `skills/ethos-u/` | Evaluate quantized ML models across Arm Ethos-U configurations. |
 | `skills/pack/` | Create or update reusable device and software pack content. |
 | `skills/devops/` | Create build, test, release, and CI/CD automation. |
 
