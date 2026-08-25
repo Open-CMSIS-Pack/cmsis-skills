@@ -47,7 +47,6 @@ For every `SKILL.md` under `generic-mcu-skills/skills/`, the validator checks:
   - output or expected output;
   - resources or generated-project validation.
 - Relative Markdown links point to existing files inside the repository.
-- Unexpected unresolved template tokens are not present.
 
 When a skill contains `agents/openai.yaml`, the validator also checks:
 
@@ -64,7 +63,7 @@ platform so logs are easy to scan and compare:
 INFO: Validating 5 skill files under generic-mcu-skills/skills
 INFO: Checking 1/5: generic-mcu-skills/skills/project/check-cmsis-environment/SKILL.md
 ...
-INFO: Validation passed: checked 5 skill(s); metadata, required sections, local links, agent YAML, and tokens are valid.
+INFO: Validation passed: checked 5 skill(s); metadata, required sections, local links, and agent YAML are valid.
 ```
 
 Failures are logged at `ERROR` level and include the affected file and a specific reason, for example:

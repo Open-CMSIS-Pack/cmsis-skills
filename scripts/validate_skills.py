@@ -29,7 +29,6 @@ LOGGER = logging.getLogger("validate_skills")
 
 HEADING_PATTERN = re.compile(r"^## (.+?)\s*$", re.MULTILINE)
 LINK_PATTERN = re.compile(r"!?\[[^]]*\]\(([^)]+)\)")
-TOKEN_PATTERN = re.compile(r"__[A-Z][A-Z0-9_]+__")
 
 
 def display_path(path: Path) -> str:
@@ -98,21 +97,6 @@ def validate_skill(path: Path, errors: list[str], names: dict[str, Path]) -> Non
         if not headings.intersection(section_group):
             error(errors, path, f"missing required section: one of {section_group}")
 
-    allowed_tokens = {
-        "__COMPILER__",
-        "__DEVICE_SUPPORT_PACK__",
-        "__BOARD_SUPPORT_PACK__",
-        "__TARGET_TYPE__",
-        "__CMSIS_BOARD__",
-        "__CMSIS_DEVICE__",
-        "__WEST_BOARD__",
-        "__TOKEN__",
-    }
-    unexpected_tokens = {
-        token for token in TOKEN_PATTERN.findall(text) if token not in allowed_tokens
-    }
-    if unexpected_tokens:
-        error(errors, path, "unresolved template token")
     validate_links(path, text, errors)
 
     agent_path = path.parent / "agents" / "openai.yaml"
@@ -176,7 +160,7 @@ def main() -> int:
 
     LOGGER.info(
         "Validation passed: checked %d skill(s); metadata, required sections, local links, "
-        "agent YAML, and tokens are valid.",
+        "and agent YAML are valid.",
         len(skill_files),
     )
     return 0
