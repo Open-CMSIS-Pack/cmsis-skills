@@ -1,2 +1,4 @@
 vcpkg-configuration.json
 .vscode/settings.json
+.cmsis-dev/
+**/__pycache__/
