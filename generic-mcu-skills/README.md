@@ -36,6 +36,12 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 | --- | --- | --- |
 | [`evaluate-ethos-u-variants`](skills/ethos-u/evaluate-ethos-u-variants/SKILL.md) | Compare Vela memory requirements and estimated performance for a quantized model across Ethos-U configurations. | <ul><li>Input: pre-trained quantized `.tflite` or `.tosa` model</li><li>Output: `.agent-artifacts/ethos-u-evaluation/&lt;model&gt;-&lt;timestamp&gt;/comparison.md` and `comparison.csv`</li></ul> |
 
+### DevOps
+
+| Skill | Purpose | Artifacts |
+| --- | --- | --- |
+| [`create-csolution-github-action`](skills/devops/create-csolution-github-action/SKILL.md) | Create build or optional FVP-test GitHub Actions for selected targets of the loaded CMSIS solution. | <ul><li>Output: `.github/workflows/build-&lt;solution-name&gt;.yml` or `test-&lt;solution-name&gt;.yml`</li></ul> |
+
 ### Pack
 
 | Skill | Purpose | Artifacts |
