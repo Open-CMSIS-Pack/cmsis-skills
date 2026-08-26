@@ -1,0 +1,4 @@
+interface:
+  display_name: "CMSIS: Evaluate Ethos-U Variants"
+  short_description: "Compare Vela memory and performance estimates"
+  default_prompt: "Use $evaluate-ethos-u-variants to compare this quantized ML model on Ethos-U configurations."
