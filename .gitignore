@@ -1,3 +1,5 @@
 vcpkg-configuration.json
 .vscode/settings.json
 .DS_Store
+.cmsis-dev/
+**/__pycache__/
