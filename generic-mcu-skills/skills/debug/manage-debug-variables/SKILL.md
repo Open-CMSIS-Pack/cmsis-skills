@@ -18,17 +18,18 @@ description: Design one documented CMSIS debug-sequence runtime variable for eit
 
 ## Execution Steps (Strict Workflow)
 
-1. **Analysis:** Verify the variable's documented meaning, allowed values or type, supported default, consuming sequence path, evidence, destination, and applicable descendants or processors.
-2. **Processing:** Reuse an identical existing `__var` and stop for direction on a name conflict. For PDSC, determine the highest selected device-tree level where definition and use are valid and combine contributions into the one applicable `<debugvars>` element. For `cbuild-run`, treat applicability as flattened to the file's selected target and merge the declaration into the single `debug-vars.vars` literal scalar.
-3. **Validation:** Confirm that the proposed sequence reference is minimal and controls only verified behavior. Reject undocumented values, routes, delays, register behavior, or missing evidence disguised as a user choice. Check that the destination syntax preserves the same declaration text and default.
-4. **Formatting:** Return destination, `__var` declaration, required sequence reference/declaration/branch, applicability, consumers, evidence, collision result, insertion point, and optional `.dbgconf` annotation.
+1. **Analysis:** Verify the variable's documented meaning, allowed values or type, valid initial value, consuming sequence path, evidence, destination, and applicable descendants or processors. Assess evidence for a preferred default separately from evidence that the initial value is supported.
+2. **Processing:** Reuse an identical existing `__var` and stop for direction on a name conflict. When the existing or source-provided initial value is supported but no better default is evidenced, preserve it, continue, and mark it as configurable rather than blocking. For PDSC, determine the highest selected device-tree level where definition and use are valid and combine contributions into the one applicable `<debugvars>` element. For `cbuild-run`, treat applicability as flattened to the file's selected target and merge the declaration into the single `debug-vars.vars` literal scalar.
+3. **Validation:** Confirm that the proposed sequence reference is minimal and controls only verified behavior. Reject undocumented values, routes, delays, register behavior, or missing evidence disguised as a user choice. Check that the destination syntax preserves the same declaration text and initial value. Do not fail validation solely because evidence does not identify an optimal or preferred default for a configurable variable.
+4. **Formatting:** Return destination, `__var` declaration, required sequence reference/declaration/branch, applicability, consumers, evidence, collision result, insertion point, optional `.dbgconf` annotation, and any advisory that the retained initial value is configurable and not established as optimal.
 
 ## Guardrails & Constraints (Strict Rules)
 
 - **No fabrication:** Do not invent variable values, defaults, register behavior, sequence branches, applicability, or Configuration Wizard annotations.
 - **Portability:** Do not introduce a device-family, debugger, toolchain, build-system, or RTOS dependency unless authoritative inputs require it.
+- **Configurable-default advisory:** Lack of evidence for a better, optimal, or preferred default is not a blocker when the retained initial value is documented as supported. Continue with that value and inform the user that it is configurable and that no stronger default recommendation was established.
 - **Generated-file boundary:** For `cbuild-run`, state that CMSIS-Toolbox regeneration may overwrite the target-local variable edit.
-- **Critical blockers:** Stop for an undocumented choice, unsupported default, conflicting definition, unverified consuming path, ambiguous destination, or target mismatch.
+- **Critical blockers:** Stop for an undocumented choice, absence of any supported initial value, conflicting definition, unverified consuming path, ambiguous destination, or target mismatch. Do not stop merely because no better supported value can be preferred over the retained one.
 - **Scope:** Design the variable interface only. Do not edit files, update `.dbgconf`, create agent artifacts, or redesign surrounding debug or trace sequences.
 - **Tone and style:** Respond factually and directly. Omit conversational filler.
 
