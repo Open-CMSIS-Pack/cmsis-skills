@@ -14,6 +14,6 @@ Include every verified data patch with its parent access port, address, value, m
 
 Require one explicit existing destination. Use `pdsc-output.md` for a `.pdsc`; use `cbuild-run-output.md` for `*.cbuild-run.yml`. Do not render both destinations in one invocation and do not translate an unsupported destination field into a superficially similar field.
 
-Before editing a user-owned destination, present the knowledge record, semantic definition set, exact rendered change, preserved content, and destination-specific overwrite or regeneration risk. Apply only confirmed facts. After application, run the destination validator and compare the parsed affected fields with the semantic set.
+Before editing a user-owned destination, present the knowledge record, semantic definition set, exact rendered change, preserved content, and destination-specific overwrite or regeneration risk. A PDSC candidate requires its application confirmation. For `cbuild-run`, follow `cbuild-run-output.md` and let its application skill own authorization, sibling lifecycle, original-file protection, validation, and integration boundaries. After writing or application, compare the parsed affected fields with the semantic set.
 
 Report emitted definitions, placement or merge identities, applicability, sources, confidence, unsupported mappings, unresolved items, and validation results. Return missing or contradictory hardware facts to `$debug-access-knowledge`.
