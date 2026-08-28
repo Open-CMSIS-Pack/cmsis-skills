@@ -30,6 +30,9 @@
         __var swoTrace = __traceout &amp; 0x1;
         __var syncTrace = __traceout &amp; 0x2;
         __var bufferTrace = __traceout &amp; 0x4;
+
+        // Flush the active trace route before preparing any components for the next capture.
+        Sequence("DoTraceFlush");
       </block>
       <!-- CMSIS-PACK-TRACE: ADD-DEVICE-SPECIFIC-HERE BEGIN -->
       <!-- Add verified device-specific capture work here, including migrated legacy setup when applicable. -->
