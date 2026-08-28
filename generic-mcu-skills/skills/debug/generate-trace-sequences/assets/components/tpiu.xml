@@ -58,9 +58,6 @@
 
       Message(0, "Begin CS_TPIU___INSTANCE_INDEX_____INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
 
-      // Ensure involved components are in a well-defined state.
-      Sequence("DoTraceFlush");
-
       // Configure TPIU if needed and enable formatter
       __ap = TPIU___INSTANCE_INDEX___AP;                            // Set AP
       ffcrValue  = Read32(TPIU___INSTANCE_INDEX___ADDRESS + 0x304);

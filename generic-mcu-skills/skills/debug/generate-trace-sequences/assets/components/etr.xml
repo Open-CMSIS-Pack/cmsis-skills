@@ -71,9 +71,6 @@
 
       Message(0, "Begin CS_ETR___INSTANCE_INDEX___Capture_CircularBuffer @0x%08X, AP 0x%08X", ETR___INSTANCE_INDEX___ADDRESS, ETR___INSTANCE_INDEX___AP);
 
-      // Ensure involved components are in a well-defined state.
-      Sequence("DoTraceFlush");
-
       __ap = ETR___INSTANCE_INDEX___AP;                                                           // Set AP
       ffcrValue  = Read32(ETR___INSTANCE_INDEX___ADDRESS + 0x304);
       ffcrValue |= 0x00000002;                                                                    // FFCR: Enable Formatter

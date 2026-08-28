@@ -26,14 +26,14 @@ The markers establish this order:
 
 ```text
 TraceStart:   device-specific region -> mode-specific CoreSight start helpers
-TraceCapture: device-specific region -> mode-specific CoreSight capture helpers
+TraceCapture: DoTraceFlush -> device-specific region -> mode-specific CoreSight capture helpers
 TraceFlush:   mode-specific CoreSight flush/read helpers -> device-specific region
 TraceStop:    mode-specific CoreSight stop helpers -> device-specific region
 ```
 
 Enable trace clocks in `DebugDeviceUnlock` before auto-detection unless evidence or explicit direction requires otherwise. Also configure trace clocks in the device-specific region of `TraceStart`, before CoreSight start helpers, because unlock-time clock state may not survive reset.
 
-The debugger calls `TraceFlush` before `TraceStop`. A verified sequence may reuse `DoTraceFlush_<mode>`, but `TraceStop` and `DoTraceStop_<mode>` must not call `DoTraceFlush` or a `DoTraceFlush_<mode>` helper again.
+`TraceCapture` calls `DoTraceFlush` exactly once before preparing any components for the next capture. Component capture sequences must not call `DoTraceFlush`; otherwise, a multi-component route is flushed repeatedly while it is being reconfigured. The debugger calls `TraceFlush` before `TraceStop`. A verified sequence may reuse `DoTraceFlush_<mode>`, but `TraceStop` and `DoTraceStop_<mode>` must not call `DoTraceFlush` or a `DoTraceFlush_<mode>` helper again.
 
 ## Component selection and placement
 
