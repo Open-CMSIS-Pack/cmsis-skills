@@ -10,7 +10,7 @@ Use the current [Open-CMSIS-Pack *Debug Description* specification](https://open
 
 Always generate full trace setup: the emitted sequences configure each selected trace sink and data path rather than relying on debugger a-priori CoreSight configuration. Trace setup is device-level by default. Unless the user narrows scope, cover all processors and all evidence-backed trace paths in the selected PDSC subtree or flattened `cbuild-run` target.
 
-Configure every evidenced path by default. When an end-user choice is documented, emit or update a debug variable with a supported default. For PDSC output, also propose matching Configuration Wizard annotations in `.dbgconf`; do not edit `.dbgconf` without explicit confirmation.
+Configure every evidenced path by default. When an end-user choice is documented, emit or update a debug variable with a supported initial value. If an existing or source-provided value is supported but evidence does not establish a better default, retain it, continue generation, and inform the user that it is configurable and not established as optimal. For PDSC output, also propose matching Configuration Wizard annotations in `.dbgconf`; do not edit `.dbgconf` without explicit confirmation.
 
 Preserve these extension markers exactly in the destination representation defined by the output contract:
 

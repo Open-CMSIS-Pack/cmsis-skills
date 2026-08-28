@@ -10,7 +10,7 @@ Assemble a destination-neutral proposal containing sequence name, optional infor
 
 For verified device unlock behavior, prefer a `DebugDeviceUnlock` implementation that supplements debugger defaults. Override another predefined sequence only when `DebugDeviceUnlock` cannot provide the required documented behavior. Obtain the current default, copy its complete semantic structure, then apply only evidence-backed changes and record each difference.
 
-Implement every evidenced device-specific non-trace behavior in the selected scope or flattened target. For each documented end-user runtime choice, run `$manage-debug-variables`; do not use a variable to defer missing evidence or omit verified behavior.
+Implement every evidenced device-specific non-trace behavior in the selected scope or flattened target. For each documented end-user runtime choice, run `$manage-debug-variables`; do not use a variable to defer missing evidence or omit verified behavior. When a variable has a supported existing or source-provided initial value but no better default is evidenced, retain it, continue generation, and inform the user that the value is configurable and not established as optimal.
 
 ## Low-power and sleep-mode debug
 
