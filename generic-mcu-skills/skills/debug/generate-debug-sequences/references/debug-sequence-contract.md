@@ -1,31 +1,29 @@
 # Device debug-sequence contract
 
-## Shared integration ownership
-
-Run `$prepare-pdsc-sequence-change` before domain assembly, `$manage-pdsc-debugvars` for a documented runtime choice, `$apply-confirmed-pdsc-proposal` after confirmation, and `$validate-pdsc-sequence-xml` for common XML/PDSC and `<block>` checks. This contract defines the debug-specific evidence, CPU, default-override, and low-power requirements that extend those shared workflows.
-
 ## Scope and evidence
 
-Reuse the read-only `.agent-artifacts/<pdsc-stem>.debug-access-knowledge.md` from `$debug-access-knowledge` and `.agent-artifacts/<pdsc-stem>.debug-knowledge.md` from `$debug-knowledge`: cross-check selected scope, processors, DP/AP/APID mappings, inherited definitions, and device behavior. Create `.agent-artifacts/<pdsc-stem>.debug-sequences.md` without confirmation. Record both knowledge references, scope, processors, inherited sequences, proposed names, placement and descendants, evidence, default-implementation provenance, low-power debug behavior, and open questions. Return missing connection facts to `$debug-access-knowledge` and missing behavior facts to `$debug-knowledge`.
+Reuse the read-only `.agent-artifacts/<pdsc-stem>.debug-access-knowledge.md` and `.agent-artifacts/<pdsc-stem>.debug-knowledge.md` records. Cross-check the selected destination, processors, DP/AP/APID mappings, existing sequence identities, and device behavior. Return missing connection facts to `$debug-access-knowledge` and missing behavior facts to `$debug-knowledge`.
 
-Browse the current official [Open-CMSIS-Pack *Debug Description* specification](https://open-cmsis-pack.github.io/Open-CMSIS-Pack-Spec/main/html/debug_description.html) and relevant linked pages before implementation. Use it as the authority for XML grammar, predefined names, execution context, and default implementations. Search device documentation, vendor packs, SVDs, debug scripts, and source code for device-specific facts.
+Use the current [Open-CMSIS-Pack *Debug Description* specification](https://open-cmsis-pack.github.io/Open-CMSIS-Pack-Spec/main/html/debug_description.html) as the authority for sequence names, execution context, predefined behavior, variables, functions, and C-like expressions. For `cbuild-run`, also use the current [CMSIS-Toolbox *Build Information Files* specification](https://github.com/Open-CMSIS-Pack/cmsis-toolbox/blob/main/docs/YML-CBuild-Format.md#cbuild-runyml) for serialization only.
 
-For verified device unlock behavior, prefer a `DebugDeviceUnlock` implementation that supplements the debugger-provided defaults over overriding another predefined sequence. Override a predefined sequence only when `DebugDeviceUnlock` cannot provide the required documented behavior. Obtain the current specification default, then copy its complete structure, comments, variables, checks, waits, cleanup, and control blocks before applying evidence-backed changes. Record the specification URL, version/revision, and section. For custom sequences, document every register address, value, delay, condition, and call with evidence; never invent reset, unlock, authentication, boot, flash, or processor-control behavior.
+Assemble a destination-neutral proposal containing sequence name, optional information text, optional processor applicability, and an ordered recursive tree of executable, conditional, loop, and atomic blocks. Keep expression text free of XML escaping until destination rendering. Record every register address, value, delay, condition, call, source, and predefined-default provenance; never invent device behavior.
 
-Implement every evidenced device-specific non-trace behavior in the selected scope by default. When a documented runtime choice belongs to the end user, generate or update it as a `debugvars` `__var` with a supported default and propose matching Configuration Wizard annotations in `.dbgconf`; do not use it to defer missing evidence or omit a verified behavior.
+For verified device unlock behavior, prefer a `DebugDeviceUnlock` implementation that supplements debugger defaults. Override another predefined sequence only when `DebugDeviceUnlock` cannot provide the required documented behavior. Obtain the current default, copy its complete semantic structure, then apply only evidence-backed changes and record each difference.
+
+Implement every evidenced device-specific non-trace behavior in the selected scope or flattened target. For each documented end-user runtime choice, run `$manage-debug-variables`; do not use a variable to defer missing evidence or omit verified behavior.
 
 ## Low-power and sleep-mode debug
 
-For each relevant documented mode, determine whether the processor, DP/AP, debug clocks/power, pins, reset, and wake path remain accessible. Use only documented pre-entry, wake, reset, or reconnect actions to retain or restore debug access; never prevent sleep, force a higher-power mode, or write undocumented registers merely to keep a probe connected.
+For each relevant documented mode, determine whether the processor, DP/AP, debug clocks and power, pins, reset, and wake path remain accessible. Use only documented pre-entry, wake, reset, or reconnect actions. Never prevent sleep, force a higher-power mode, or write undocumented registers merely to keep a probe connected.
 
-For every mode, record applicability, expected access, required action, affected sequence, evidence, and validation in `.agent-artifacts/<pdsc-stem>.debug-sequences.md`. When a target is available, enter the mode, check access where supported, then wake or recover it and confirm the processor and DP/AP path remain usable; otherwise record the required test. State the documented recovery path for modes that cannot retain debugging, and return connection or DP/AP changes to `$debug-access-knowledge` and low-power behavior changes to `$debug-knowledge`.
+Record applicability, expected access, required action, affected sequence, evidence, and validation in the private proposal record. When a target is available, enter the mode, check access where supported, then wake or recover it and confirm that the processor and DP/AP path remain usable; otherwise record the required test and documented recovery path.
 
-## CPU applicability and placement
+## CPU applicability
 
-Analyze every affected CPU connection: compare `Pname`, processor-to-DP/AP/APID mapping, and initial `__ap`/`__apid`. Prefer a shared implementation without `Pname` when the only difference is the initial `__ap` or `__apid` selection; rely on that connection context rather than duplicating the sequence. Use connection-based dispatch only when the remaining implementation is demonstrably identical; use `Pname`-specific definitions only for a verified behavioral difference that cannot be expressed through the connection context. Place shared definitions at the topmost common device-tree level and deviations only on outer leaf variants. Preserve unrelated PDSC content and all trace configuration.
+Compare every affected CPU connection, including `pname` and initial `__ap` or `__apid`. Prefer one sequence without processor restriction when connection context is the only difference. Use connection-based dispatch only when the remaining behavior is demonstrably identical; use processor-specific definitions only for a verified difference that cannot be expressed through connection context.
 
-When the change adds a `<debugvars>` `__var`, suggest adding or updating the matching `.dbgconf` file with Configuration Wizard annotations. Include the variable name, default, and applicable scope; do not modify the `.dbgconf` file unless the user includes it in their confirmation.
+For PDSC placement and XML rules, use `pdsc-output.md`. For flattened target applicability and YAML rules, use `cbuild-run-output.md`.
 
-## Debug-specific validation
+## Semantic validation
 
-For every overridden predefined sequence, compare generated output with the current specification default and record every evidence-backed difference. Run documented low-power checks when a target is available, or record the required test. Report changed sequences, per-CPU applicability, sources, placement, and the shared-validation result.
+For every overridden predefined sequence, compare the semantic proposal with the current default and record every evidence-backed difference. Confirm every `Sequence("...")` call resolves to a proposed, existing, or predefined identity. Run documented low-power checks when a target is available, or record the required test. Report changed sequence identities, per-CPU applicability, sources, and destination validation.

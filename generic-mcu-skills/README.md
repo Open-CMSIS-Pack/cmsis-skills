@@ -34,10 +34,13 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 
 | Skill | Purpose | Artifacts |
 | --- | --- | --- |
-| [`manage-pdsc-debugvars`](skills/debug/manage-pdsc-debugvars/SKILL.md) | Design and safely integrate documented PDSC `debugvars` runtime choices. | |
-| [`generate-debug-description`](skills/debug/generate-debug-description/SKILL.md) | Add or review verified non-sequence CMSIS-Pack Debug Description definitions in an existing DFP PDSC. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md`</li></ul> |
-| [`generate-debug-sequences`](skills/debug/generate-debug-sequences/SKILL.md) | Add evidence-backed device-specific non-trace debug sequences to an existing DFP PDSC. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md`</li><li>Input: `.agent-artifacts/{pdsc-stem}.debug-knowledge.md`</li><li>Output: `.agent-artifacts/{pdsc-stem}.debug-sequences.md`: private proposal record containing proposed sequences, debugvars, evidence, and validation status</li></ul> |
-| [`generate-trace-sequences`](skills/debug/generate-trace-sequences/SKILL.md) | Add modular, evidence-backed CoreSight trace sequences to an existing DFP PDSC. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.trace-knowledge.md`</li><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md` when required by the trace record</li><li>Output: `.agent-artifacts/{pdsc-stem}.trace-sequences.md`: private proposal record containing proposed sequences, debugvars, evidence, and validation status</li></ul> |
+| [`prepare-cbuild-run-change`](skills/debug/prepare-cbuild-run-change/SKILL.md) | Scope and prepare a target-local debug or trace change in an existing `cbuild-run` file. | |
+| [`manage-debug-variables`](skills/debug/manage-debug-variables/SKILL.md) | Design documented runtime choices for PDSC `debugvars` or `cbuild-run` `debug-vars`. | |
+| [`validate-cbuild-run-yaml`](skills/debug/validate-cbuild-run-yaml/SKILL.md) | Validate YAML syntax and common debug-runtime structure in a `cbuild-run` file. | |
+| [`apply-confirmed-cbuild-run-proposal`](skills/debug/apply-confirmed-cbuild-run-proposal/SKILL.md) | Apply and validate an explicitly confirmed target-local `cbuild-run` debug proposal. | |
+| [`generate-debug-description`](skills/debug/generate-debug-description/SKILL.md) | Add or review verified non-sequence debug runtime definitions in an existing DFP PDSC or `cbuild-run` file. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md`</li></ul> |
+| [`generate-debug-sequences`](skills/debug/generate-debug-sequences/SKILL.md) | Add evidence-backed device-specific non-trace sequences to an existing DFP PDSC or `cbuild-run` file. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md`</li><li>Input: `.agent-artifacts/{pdsc-stem}.debug-knowledge.md`</li><li>Output: `.agent-artifacts/{destination-stem}.debug-sequences.md`: private proposal record containing rendered XML or YAML, variables, evidence, and validation status</li></ul> |
+| [`generate-trace-sequences`](skills/debug/generate-trace-sequences/SKILL.md) | Add modular, evidence-backed CoreSight trace sequences to an existing DFP PDSC or `cbuild-run` file. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.trace-knowledge.md`</li><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md` when required by the trace record</li><li>Output: `.agent-artifacts/{destination-stem}.trace-sequences.md`: private proposal record containing rendered XML or YAML, variables, evidence, and validation status</li></ul> |
 
 ### Ethos-U
 
@@ -57,7 +60,7 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 | --- | --- | --- |
 | [`prepare-pdsc-sequence-change`](skills/pack/prepare-pdsc-sequence-change/SKILL.md) | Scope and prepare a debug or trace PDSC sequence change for domain assembly. | |
 | [`validate-pdsc-sequence-xml`](skills/pack/validate-pdsc-sequence-xml/SKILL.md) | Validate shared PDSC sequence XML and C-like block formatting. | |
-| [`apply-confirmed-pdsc-proposal`](skills/pack/apply-confirmed-pdsc-proposal/SKILL.md) | Apply and validate an explicitly confirmed PDSC sequence or `debugvars` proposal. | |
+| [`apply-confirmed-pdsc-proposal`](skills/pack/apply-confirmed-pdsc-proposal/SKILL.md) | Apply and validate an explicitly confirmed PDSC debug-description, sequence, or `debugvars` proposal. | |
 
 ## CMSIS foundation
 
