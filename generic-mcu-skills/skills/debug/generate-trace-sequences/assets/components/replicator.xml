@@ -7,6 +7,7 @@
     __var REPLICATOR___INSTANCE_INDEX___ID_FILTER0 = 0x00000000; // Default: all pass to output 0
     __var REPLICATOR___INSTANCE_INDEX___ID_FILTER1 = 0x00000000; // Default: all pass to output 1
   </debugvars>
+
   <sequence name="CS_REPLICATOR___INSTANCE_INDEX___Configure">
     <block>
       // Helper variables
@@ -25,4 +26,3 @@
     </block>
   </sequence>
 </cmsis-pack-trace-snippet>
-
