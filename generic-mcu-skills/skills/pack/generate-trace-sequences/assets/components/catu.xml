@@ -1,0 +1,114 @@
+<!-- CMSIS-Pack CATU template. Replace __INSTANCE_INDEX__ with the stable numeric instance suffix. -->
+<cmsis-pack-trace-snippet component="CATU">
+  <debugvars>
+    // CATU
+    // Additional settings if CATU implemented
+    __var CATU___INSTANCE_INDEX___ADDRESS             = 0x00000000;
+    __var CATU___INSTANCE_INDEX___AP                  = 0x00000000;
+    __var CATU___INSTANCE_INDEX___MODE                = 0x00000000;            // [0]: 1- Translate, 0 - Pass-through
+    __var CATU___INSTANCE_INDEX___SCATTERLIST_ADDR    = 0x00000000;            // Lookup table in RAM for translation
+    __var CATU___INSTANCE_INDEX___SCATTERLIST_ADDR_HI = 0x00000000;
+    __var CATU___INSTANCE_INDEX___INPUT_ADDR          = ETR___INSTANCE_INDEX___BUFFER_ADDRESS;    // Virtual base address
+    __var CATU___INSTANCE_INDEX___INPUT_ADDR_HI       = ETR___INSTANCE_INDEX___BUFFER_ADDRESS_HI;
+    __var CATU___INSTANCE_INDEX___AXI_CTRL = (((ETR___INSTANCE_INDEX___AXI_CTL &gt;&gt; 16) &amp; 0xF) &lt;&lt; 4) | (ETR___INSTANCE_INDEX___AXI_CTL &amp; 0x3); // [7:4]: ARCACHE, [1:0]: ARPROT (Secure|Privileged)
+    __var CATU___INSTANCE_INDEX___IRQEN               = 0x00000000;            // [0]: Enable/Disable
+  </debugvars>
+
+  <sequence name="CS_CATU___INSTANCE_INDEX___Configure" info="Scatterlist expected to be programmed separately, too complex">
+    <block>
+      // Helper variables
+      __var savedAP = __ap;
+      __var status = 0x00000000;
+
+      Message(0, "Begin CS_CATU___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
+
+      __ap = CATU___INSTANCE_INDEX___AP;                                                              // Set AP
+
+      // Disable CATU before configuration
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x000, 0x00000000);
+
+      status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
+    </block>
+    <control while="(status &amp; 0x0100) == 0" info="Wait for READY" timeout="100">
+      <block>
+        status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
+      </block>
+    </control>
+    <block>
+      // Configure
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x004, CATU___INSTANCE_INDEX___MODE);                 // Set MODE
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x008, CATU___INSTANCE_INDEX___AXI_CTRL);             // Set AXICTRL
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x00C, CATU___INSTANCE_INDEX___IRQEN);                // Set IRQEN
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x020, CATU___INSTANCE_INDEX___SCATTERLIST_ADDR);     // Set SLADDRLO
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x024, CATU___INSTANCE_INDEX___SCATTERLIST_ADDR_HI);  // Set SLADDRHI
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x028, CATU___INSTANCE_INDEX___INPUT_ADDR);           // Set INADDRLO
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x02C, CATU___INSTANCE_INDEX___INPUT_ADDR_HI);        // Set INADDRHI
+
+      // Enable CATU after configuration
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x000, 0x00000001);
+        status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
+    </block>
+    <control while="(status &amp; 0x0100) == 1" info="Wait for READY cleared" timeout="100">
+      <block>
+        status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
+      </block>
+    </control>
+    <block>
+      __ap = savedAP;
+      Message(0, "End CS_CATU___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
+    </block>
+  </sequence>
+
+  <sequence name="CS_CATU___INSTANCE_INDEX___Capture" info="Restart address translation unit">
+    <block>
+      // Helper variables
+      __var savedAP = __ap;
+      __var status = 0x00000000;
+
+      Message(0, "Begin CS_CATU___INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
+
+      __ap = CATU___INSTANCE_INDEX___AP; // Set AP
+
+      // Keep initial values and re-enable CATU before next capture.
+      // Clears any remaning error bits.
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x000, 0x00000001);
+
+      status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
+    </block>
+    <control while="(status &amp; 0x0100) == 1" info="Wait for READY cleared" timeout="100">
+      <block>
+        status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
+      </block>
+    </control>
+    <block>
+      __ap = savedAP;
+      Message(0, "End CS_CATU___INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
+    </block>
+  </sequence>
+
+  <sequence name="CS_CATU___INSTANCE_INDEX___Flush" info="Flush any outstanding memory transactions">
+    <block>
+      // Helper variables
+      __var savedAP = __ap;
+      __var status = 0x00000000;
+
+      Message(0, "Begin CS_CATU___INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
+      __ap = CATU___INSTANCE_INDEX___AP; // Set AP
+
+      // Disable CATU before configuration
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x000, 0x00000000);
+
+      status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
+    </block>
+    <control while="(status &amp; 0x0100) == 0" info="Wait for READY" timeout="100">
+      <block>
+        status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
+      </block>
+    </control>
+    <block>
+      __ap = savedAP;
+      Message(0, "End CS_CATU___INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
+    </block>
+  </sequence>
+
+</cmsis-pack-trace-snippet>

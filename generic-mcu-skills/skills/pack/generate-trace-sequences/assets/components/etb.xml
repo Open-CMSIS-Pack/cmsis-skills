@@ -6,6 +6,7 @@
     __var ETB___INSTANCE_INDEX___AP            = 0x00000000;
     __var ETB___INSTANCE_INDEX___TRIGGER_COUNT = 0x0;
   </debugvars>
+
   <sequence name="CS_ETB___INSTANCE_INDEX___Configure">
     <block>
       // Helper variables
@@ -14,7 +15,7 @@
       __var etbStatus = 0x00000000;
 
       Message(0, "Begin CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
-      __ap = ETB___INSTANCE_INDEX___AP; // Set AP
+      __ap = ETB___INSTANCE_INDEX___AP;                             // Set AP
 
       // Configure ETB
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x020, 0x00000000);  // Disable ETB before configuring
@@ -39,6 +40,7 @@
       Message(0, "End CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
     </block>
   </sequence>
+
   <sequence name="CS_ETB___INSTANCE_INDEX___Capture">
     <block>
       // Helper variables
@@ -50,9 +52,9 @@
       // Ensure involved components are in a well-defined state.
       Sequence("DoTraceFlush");
 
-      __ap = ETB___INSTANCE_INDEX___AP; // Set AP
+      __ap = ETB___INSTANCE_INDEX___AP;                             // Set AP
       ffcrValue  = Read32(ETB___INSTANCE_INDEX___ADDRESS + 0x304);
-      ffcrValue |= 0x00000002;               // FFCR: Enable Formatter
+      ffcrValue |= 0x00000002;                                      // FFCR: Enable Formatter
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x01C, ETB___INSTANCE_INDEX___TRIGGER_COUNT); // TRG: Number of words to capture after trigger
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x018, 0x00000000);  // Init RwP
@@ -63,6 +65,7 @@
       Message(0, "End CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
     </block>
   </sequence>
+
   <sequence name="CS_ETB___INSTANCE_INDEX___Flush">
     <block>
       // Helper variables
@@ -72,15 +75,15 @@
 
       Message(0, "Begin CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
 
-      __ap = ETB___INSTANCE_INDEX___AP; // Set AP
+      __ap = ETB___INSTANCE_INDEX___AP;  // Set AP
     </block>
     <block>
       // Flush ETB first
       ffcrValue = Read32(ETB___INSTANCE_INDEX___ADDRESS + 0x304);
-      ffcrValue &amp;= ~(0x00001040); // Clear StopOnFlush and FlushOnManual
-      ffcrValue |= 0x00001000;    // Stop after the manual flush completes
+      ffcrValue &amp;= ~(0x00001040);    // Clear StopOnFlush and FlushOnManual
+      ffcrValue |= 0x00001000;           // Stop after the manual flush completes
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
-      ffcrValue |= 0x00000040;    // Trigger manual flush
+      ffcrValue |= 0x00000040;           // Trigger manual flush
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
     </block>
     <block>
@@ -112,6 +115,73 @@
     <block>
       __ap = savedAP;
       Message(0, "End CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
+    </block>
+  </sequence>
+
+  <sequence name="CS_ETB___INSTANCE_INDEX___Read_Buffer">
+    <block>
+      // Helper variables
+      __var savedAP       = __ap;
+      __var etbStatus     = 0x00000000;
+      __var bufferWords   = 0x00000000;
+      __var readPointer   = 0x00000000;
+      __var writePointer  = 0x00000000;
+      __var wordsToRead   = 0x00000000;
+      __var bytesToRead   = 0x00000000;
+      __var bytesStreamed = 0x00000000;
+
+      Message(0, "Begin CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Read_Buffer @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
+
+      __ap = ETB___INSTANCE_INDEX___AP; // Set AP
+
+      // The legacy ETB RDP, RRP, and RWP registers use trace-RAM word counts.
+      bufferWords  = Read32(ETB___INSTANCE_INDEX___ADDRESS + 0x004);
+      etbStatus    = Read32(ETB___INSTANCE_INDEX___ADDRESS + 0x00C);
+      readPointer  = Read32(ETB___INSTANCE_INDEX___ADDRESS + 0x014);
+      writePointer = Read32(ETB___INSTANCE_INDEX___ADDRESS + 0x018);
+    </block>
+    <control if="bufferWords != 0">
+      <control if="(etbStatus &amp; 0x00000001) != 0">
+        <block>
+          // STS.Full distinguishes a wrapped/full buffer from an empty buffer
+          // when the read and write pointers are equal.
+          wordsToRead = bufferWords;
+          // RWP identifies the oldest retained trace after the buffer wraps.
+          Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x014, writePointer); // Rebase RRP for chronological output
+        </block>
+      </control>
+      <control if="(etbStatus &amp; 0x00000001) == 0">
+        <control if="writePointer &gt;= readPointer">
+          <block>
+            wordsToRead = writePointer - readPointer;
+          </block>
+        </control>
+        <control if="writePointer &lt; readPointer">
+          <block>
+            wordsToRead = (bufferWords - readPointer) + writePointer;
+          </block>
+        </control>
+      </control>
+      <block>
+        bytesToRead = wordsToRead * 4;
+      </block>
+      <control if="bytesToRead != 0">
+        <block>
+          // RRD reads 32-bit trace-RAM words and advances the ETB RRP register.
+          BufferRead(0, 0, ETB___INSTANCE_INDEX___ADDRESS + 0x010, bytesToRead, 32);
+          bytesStreamed = BufferStreamOut(0, 0, bytesToRead, ".trace/TraceBufferOutput.TB.raw", 0, 0);
+          Message(0, "Streamed %d of %d ETB trace bytes", bytesStreamed, bytesToRead);
+        </block>
+      </control>
+      <control if="bytesToRead == 0">
+        <block>
+          Message(1, "ETB trace buffer is empty");
+        </block>
+      </control>
+    </control>
+    <block>
+      __ap = savedAP;
+      Message(0, "End CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Read_Buffer @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 </cmsis-pack-trace-snippet>
