@@ -28,6 +28,7 @@ description: Prepare an evidence-backed debug-description, debug-sequence, or tr
 - **No fabrication:** Do not invent target identity, topology, sequence behavior, variables, merge keys, or YAML fields.
 - **Portability:** Do not introduce a device-family, debugger, toolchain, build-system, or RTOS dependency unless authoritative inputs require it.
 - **Generated-file boundary:** Treat manual `cbuild-run` edits as target-local configuration that may be an end-user override or a proving step for a later Pack change, and may be replaced by CMSIS-Toolbox regeneration. Do not imply that the edit itself updates its PDSC, BSP, or solution source.
+- **Authorization boundary:** Treat an initial request to modify a `cbuild-run` file as authorization for read-only preparation only. It is not confirmation to create a candidate or edit any file.
 - **Critical blockers:** Stop when the file is absent or invalid YAML, the top-level mapping is not `cbuild-run`, target identity contradicts the verified records, a required mapping is undocumented, or a merge identity conflicts.
 - **Scope:** Prepare integration only. Do not design debug or trace behavior, render final YAML, edit files, or create agent-artifact records.
 - **Tone and style:** Respond factually and directly. Omit conversational filler.

@@ -20,10 +20,10 @@ Ensure `debug-topology.trace-sinks` already identifies every selected physical s
 
 For legacy or omitted `debug-sequences-conf.trace-setup`, follow the migration contract before setting `trace-setup: full`. Render the common extension markers as raw YAML comments without changing their text.
 
-Present exact YAML and merge identities for confirmation. Apply through `$apply-confirmed-cbuild-run-proposal`, validate through `$validate-cbuild-run-yaml`, and then run:
+Treat the initial request to modify the `cbuild-run` file as authorization to prepare this proposal only. Select an unused sibling path named `<base>.proposed-<conversation-id>.cbuild-run.yml`; present that exact path with the exact YAML and merge identities before requesting confirmation. Only a subsequent user response can confirm that displayed proposal. Apply through `$apply-confirmed-cbuild-run-proposal`, which may write only the displayed sibling candidate and must leave the original unchanged, validate the candidate through `$validate-cbuild-run-yaml`, and then run:
 
 ```text
-rg -n 'INSERT-CORESIGHT-SNIPPET-CALLS-HERE' <target.cbuild-run.yml>
+rg -n 'INSERT-CORESIGHT-SNIPPET-CALLS-HERE' <candidate.cbuild-run.yml>
 ```
 
 Resolve scaffold-only markers in active content, verify empty-operation comments, and compare every rendered sequence, variable, and trace-sink entry with the common semantic contract and canonical-asset checklist. State that later CMSIS-Toolbox regeneration may overwrite the target-local change.

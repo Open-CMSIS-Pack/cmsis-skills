@@ -20,20 +20,21 @@ description: Generate or review verified non-sequence CMSIS debug runtime defini
 
 1. **Analysis:** Identify the destination from the explicit target path and require exactly one of `pdsc` or `cbuild-run`. Read the debug-access record and `references/description-contract.md`. Require current facts covering the selected connection and non-sequence definitions; return to `$debug-access-knowledge` when the record is absent, blocked, stale, contradictory, or insufficient.
 2. **Processing:** Assemble one destination-neutral definition set containing connection defaults, SWJ/dormant behavior, debug ports, access ports, processor mappings, and data patches. For PDSC, read `references/pdsc-output.md` and render inherited/local XML. For `cbuild-run`, read `references/cbuild-run-output.md`, run `$prepare-cbuild-run-change`, and render only documented flattened YAML mappings. Report unsupported destination mappings instead of approximating them.
-3. **Validation:** Present the referenced knowledge record, semantic definition set, exact rendered change, preserved content, and output-specific overwrite or regeneration risk; obtain confirmation. Apply through the destination-specific application skill. Run its common validator, then compare every rendered field with the semantic set and evidence; resolve every relevant failure.
+3. **Validation:** Present the referenced knowledge record, semantic definition set, exact rendered change, preserved content, and output-specific overwrite or regeneration risk. For `cbuild-run`, also select and present the exact unused sibling candidate path before requesting confirmation. Obtain confirmation only after that complete proposal is visible. Apply through the destination-specific application skill. Run its common validator, then compare every rendered field with the semantic set and evidence; resolve every relevant failure.
 4. **Formatting:** Report destination, emitted definitions, placement or merge identities, applicability, sources, confidence, unsupported mappings, unresolved items, regeneration risk when applicable, and validation results.
 
 ## Guardrails & Constraints (Strict Rules)
 
 - **No fabrication:** Do not invent topology facts, addresses, protocols, patches, values, applicability, output mappings, or YAML fields.
 - **Portability:** Do not introduce a device-family, debugger, toolchain, build-system, or RTOS dependency unless authoritative inputs require it.
+- **CBuild Run authorization:** An initial request to modify a `cbuild-run` file authorizes proposal preparation only. Confirmation is valid only when the user gives it after the exact YAML and exact sibling candidate path have been presented. Never edit the original `cbuild-run` file.
 - **Critical blockers:** Stop when no existing destination exists, the destination is ambiguous, the knowledge record is inadequate, target identity conflicts, a required mapping is undocumented, confirmation is absent, or destination validation fails.
 - **Scope:** Generate only non-sequence definitions. Preserve debug variables, debug sequences, trace sequences, and unrelated destination content; direct runtime choices to `$manage-debug-variables` and sequence behavior to the appropriate generator.
 - **Tone and style:** Respond factually and directly. Omit conversational filler.
 
 ## Expected Output
 
-Apply the confirmed non-sequence definitions to exactly one PDSC or `cbuild-run` target and report their placement or merge identities, applicability, evidence, unsupported mappings, unresolved items, and validation results.
+Apply the confirmed non-sequence definitions to exactly one PDSC destination or one `cbuild-run` sibling candidate and report their placement or merge identities, applicability, evidence, unsupported mappings, unresolved items, and validation results.
 
 ## Validation Resources
 
