@@ -1,4 +1,4 @@
 interface:
   display_name: "CMSIS: Apply Confirmed PDSC Proposal"
-  short_description: "Apply and validate a confirmed PDSC proposal"
-  default_prompt: "Use $apply-confirmed-pdsc-proposal to apply this confirmed PDSC debug proposal."
+  short_description: "Create or update PDSC candidate files"
+  default_prompt: "Use $apply-confirmed-pdsc-proposal to create or update this conversation's validated PDSC candidates."

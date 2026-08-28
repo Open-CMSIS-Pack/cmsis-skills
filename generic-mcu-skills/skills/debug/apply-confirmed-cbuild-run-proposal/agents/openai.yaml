@@ -1,4 +1,4 @@
 interface:
   display_name: "CMSIS: Apply Confirmed CBuild Run Proposal"
-  short_description: "Apply a confirmed cbuild-run debug change"
-  default_prompt: "Use $apply-confirmed-cbuild-run-proposal to apply this confirmed cbuild-run change."
+  short_description: "Create or update a cbuild-run candidate"
+  default_prompt: "Use $apply-confirmed-cbuild-run-proposal to create or update this conversation's validated cbuild-run candidate."

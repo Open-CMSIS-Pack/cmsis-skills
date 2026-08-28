@@ -1,6 +1,6 @@
 ---
 name: apply-confirmed-cbuild-run-proposal
-description: Apply one complete, explicitly confirmed debug-description, debug-sequence, trace-sequence, or debug-variable proposal to a named existing CMSIS-Toolbox `*.cbuild-run.yml` file and run YAML validation. Use after a generator has presented exact target-local YAML and the user has authorized that file; do not infer missing behavior, update Pack or solution sources, or apply stale proposals.
+description: Apply complete, explicitly confirmed debug-description, debug-sequence, trace-sequence, or debug-variable proposals to one conversation-scoped sibling of a named CMSIS-Toolbox `*.cbuild-run.yml` file and validate it without modifying the original. Use after a generator has presented exact target-local YAML and the user has authorized candidate generation or a later candidate edit; do not infer missing behavior, update Pack or solution sources, or apply stale proposals.
 ---
 
 # Apply Confirmed CBuild Run Proposal
@@ -8,33 +8,36 @@ description: Apply one complete, explicitly confirmed debug-description, debug-s
 ## Target & Persona
 
 - **Role:** CMSIS Debug Tool Integrator and Verification Engineer.
-- **Objective:** Apply one approved `cbuild-run` proposal unchanged and return its validated result.
+- **Objective:** Create one validated sibling `cbuild-run` candidate from an approved proposal while leaving the original unchanged.
 
 ## Prerequisites & Context
 
-- **Expected input:** A complete proposal in conversation with exact YAML, target path, merge identities, preserved nodes, regeneration warning, explicit confirmation, and named common plus domain-specific validation steps.
+- **Expected input:** A complete proposal in conversation with exact YAML, original path, merge identities, preserved nodes, integration warning, explicit confirmation, and named common plus domain-specific validation steps.
 - **Dependencies:** `$validate-cbuild-run-yaml` and the calling generator's semantic validation gates.
 - **Portability:** Support any existing CMSIS-Toolbox `cbuild-run` file. Do not assume a device family, debug adapter, toolchain, RTOS, or active target.
 
 ## Execution Steps (Strict Workflow)
 
-1. **Analysis:** Re-read the target file and compare its target identity and affected nodes with the confirmed proposal. Report meaningful drift and require the generator to refresh the proposal instead of applying stale YAML.
-2. **Processing:** Apply the approved change with focused patches. Preserve comments, literal block scalars, key ordering style, numeric spelling, unrelated sequences, variables, topology, debugger settings, images, programming information, and other unselected content. Replace sequences only by their confirmed `(name, pname)` identity; never replace by name alone when processor-specific entries exist.
-3. **Validation:** Run `$validate-cbuild-run-yaml`, then the calling generator's domain-specific checks. Compare the parsed affected nodes with the confirmed proposal and confirm that preserved nodes remain semantically unchanged. Resolve every failure before completion.
-4. **Formatting:** Return the changed file, applied merge identities, validation results, domain-specific results, and the recorded CMSIS-Toolbox regeneration warning.
+1. **Analysis:** Re-read the original and determine whether this conversation already records its working candidate. Compare the confirmed proposal with that candidate when present, otherwise with the original; report meaningful drift and require refreshed YAML. Record the original SHA-256 on first use and verify it on later uses.
+2. **Candidate lifecycle:** Before the first confirmed edit to this original in the conversation, create and record one byte-for-byte sibling named `<base>.proposed-<conversation-id>.cbuild-run.yml`, using a UTC `<conversation-id>` such as `20260828T143012Z`. Reuse that candidate for every later confirmed edit in the conversation; do not copy the original again or create another candidate.
+3. **Processing:** Apply the approved change only to the candidate with focused patches. Preserve comments, literal block scalars, key ordering style, numeric spelling, unrelated sequences, variables, topology, debugger settings, images, programming information, and other unselected content. Replace sequences only by their confirmed `(name, pname)` identity; never replace by name alone when processor-specific entries exist.
+4. **Validation:** Run `$validate-cbuild-run-yaml` on the candidate, then the calling generator's domain-specific checks. Compare the parsed affected nodes with the confirmed proposal, confirm preserved nodes remain semantically unchanged, and verify that the original SHA-256 is unchanged. Resolve every failure before completion.
+5. **Formatting:** Return the original and candidate paths, applied merge identities, validation results, domain-specific results, and instructions for the user to integrate the candidate into the solution or Pack source.
 
 ## Guardrails & Constraints (Strict Rules)
 
 - **No fabrication:** Do not infer missing behavior, alter the approved design, silently resolve conflicts, or claim validation passed without running it.
 - **Portability:** Do not introduce a device-family, debugger, toolchain, build-system, or RTOS dependency unless authoritative inputs require it.
-- **Generated-file boundary:** The target-local edit may be an end-user override or a proving step for a later Pack change; it does not update Pack source. Do not regenerate the target after applying the change, and state that later regeneration can overwrite it.
-- **Critical blockers:** Stop when the proposal, confirmation, target identity, merge plan, or validation plan is incomplete; also stop on meaningful drift, conflict, or unresolved validation failure.
-- **Scope:** Apply only the confirmed `cbuild-run` change. Do not update a PDSC, BSP, `.csolution.yml`, `.dbgconf`, or agent artifact.
+- **Original-file boundary:** Do not modify, rename, delete, or back up the original. Write only the conversation's recorded sibling candidate and leave integration to the user.
+- **Candidate lifecycle:** Create at most one candidate per original per conversation. Modify that recorded candidate on later confirmed changes; never overwrite an unrecorded existing file or substitute a candidate from another conversation.
+- **Generated-file boundary:** The candidate is not active solution or Pack input until the user integrates it. Do not regenerate the original or imply that candidate validation updates project sources.
+- **Critical blockers:** Stop when the proposal, confirmation, target identity, merge plan, validation plan, or writable sibling destination is incomplete; also stop when a previously recorded candidate cannot be identified, or on meaningful drift, an unrecorded path collision, conflict, changed original hash, or unresolved validation failure.
+- **Scope:** Apply only the confirmed `cbuild-run` change to the candidate. Do not update a PDSC, BSP, `.csolution.yml`, `.dbgconf`, agent artifact, or original file.
 - **Tone and style:** Respond factually and directly. Omit conversational filler.
 
 ## Expected Output
 
-Return the application result in conversation. The calling generator updates its private proposal record only after all required checks pass.
+Return the validated sibling candidate and integration handoff in conversation. The calling generator updates its private proposal record only after all required checks pass.
 
 ## Validation Resources
 
