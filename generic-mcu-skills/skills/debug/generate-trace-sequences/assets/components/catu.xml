@@ -48,7 +48,7 @@
       Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x000, 0x00000001);
         status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
     </block>
-    <control while="(status &amp; 0x0100) == 1" info="Wait for READY cleared" timeout="100">
+    <control while="(status &amp; 0x0100) != 0" info="Wait for READY cleared" timeout="100">
       <block>
         status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
       </block>
@@ -75,7 +75,7 @@
 
       status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
     </block>
-    <control while="(status &amp; 0x0100) == 1" info="Wait for READY cleared" timeout="100">
+    <control while="(status &amp; 0x0100) != 0" info="Wait for READY cleared" timeout="100">
       <block>
         status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
       </block>
