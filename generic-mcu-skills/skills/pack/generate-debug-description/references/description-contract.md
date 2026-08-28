@@ -1,19 +1,19 @@
 # Non-sequence debug-description contract
 
-Use the current [Open-CMSIS-Pack *Debug Description* specification](https://open-cmsis-pack.github.io/Open-CMSIS-Pack-Spec/main/html/debug_description.html) as the grammar authority. Use `.agent-artifacts/<pdsc-stem>.debug-access-knowledge.md` from `$debug-access-knowledge` as read-only input; never create, update, or feed PDSC implementation details back into that record.
+Use `.agent-artifacts/<pdsc-stem>.debug-access-knowledge.md` from `$debug-access-knowledge` as read-only input. Never create, update, or feed rendered PDSC or `cbuild-run` implementation details back into that record.
 
-## PDSC definitions
+## Semantic definition set
 
-Translate only verified debug-access knowledge into inherited/local non-sequence PDSC definitions. Provide explicit `debugconfig` and `debug` elements for every verified connection model. Omit optional debug-port and access-port definitions that only restate the standard default model; add `accessportV1` only when the verified topology requires it, including a mixed ADIv5/ADIv6 design. Apply `debugconfig dormant="true"` only when the debug-access knowledge record contains device-specific evidence.
+Translate only verified access knowledge into a destination-neutral set containing the selected connection model, protocol and clock defaults, SWJ and dormant behavior, debug ports, access ports, processor-to-AP mappings, reset-sequence selection when documented, and data patches. Preserve stable `dpid`, `apid`, and `pname` identities.
 
-Apply verified `dbg_datapatch` entries, including their location, value or payload, applicability, and workaround. Preserve all `debugvars` and sequences: `$generate-debug-sequences` and `$generate-trace-sequences` own their generation and updates. Do not use `__` as a prefix for DFP-defined local sequence variables.
+Omit optional topology entries that merely restate a documented format default unless the selected destination already expresses them or an explicit definition is required for the verified topology. Include an APv1, APv2, or mixed design only when evidence requires it. Apply dormant behavior only when the knowledge record contains device-specific evidence.
 
-Configure every evidenced non-sequence definition in the selected scope by default. Do not generate or update `debugvars`; direct documented runtime choices to the relevant sequence-generation skill. Do not use a missing hardware fact or a runtime choice to omit an evidenced definition.
+Include every verified data patch with its parent access port, address, value, mask, access type, applicability, information text, and workaround evidence. Do not generate or update debug variables or sequences. Do not use a missing hardware fact or runtime choice to omit an evidenced definition.
 
-Place a shared definition at the highest selected common device-tree ancestor; place a deviation only on its outer leaf variant. Preserve unrelated PDSC content.
+## Destination selection
 
-## Confirmation and validation
+Require one explicit existing destination. Use `pdsc-output.md` for a `.pdsc`; use `cbuild-run-output.md` for `*.cbuild-run.yml`. Do not render both destinations in one invocation and do not translate an unsupported destination field into a superficially similar field.
 
-Before editing a user-owned PDSC, present the referenced debug-access knowledge record and proposed XML for confirmation. Apply only confirmed facts. After application, run `$validate-pdsc-sequence-xml` for `packchk`, XML/PDSC, and file-wide C-like block-format checks. Because this skill changes non-sequence definitions, record whether the change introduced any C-like block content and inspect every relevant match returned by the validator.
+Before editing a user-owned destination, present the knowledge record, semantic definition set, exact rendered change, preserved content, and destination-specific overwrite or regeneration risk. Apply only confirmed facts. After application, run the destination validator and compare the parsed affected fields with the semantic set.
 
-Report emitted definitions, their placement and applicability, sources, confidence, unresolved items, and validation results. If the requested edit exposes a missing or contradictory hardware fact, return to `$debug-access-knowledge`; do not repair the knowledge record here.
+Report emitted definitions, placement or merge identities, applicability, sources, confidence, unsupported mappings, unresolved items, and validation results. Return missing or contradictory hardware facts to `$debug-access-knowledge`.

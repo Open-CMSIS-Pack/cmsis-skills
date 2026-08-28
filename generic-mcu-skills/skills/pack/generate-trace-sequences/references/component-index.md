@@ -1,6 +1,6 @@
 # Component asset index
 
-Read this file first, then load only the selected component assets. Every path below is relative to the skill root, not to this `references/` directory.
+Read this file first, then load only the selected component assets. Every path below is relative to the skill root, not to this `references/` directory. The XML assets are canonical semantic templates for both PDSC and `cbuild-run` output; use the selected output contract to render them and do not create parallel YAML assets.
 
 | Asset | Use when | Required verified facts |
 |---|---|---|

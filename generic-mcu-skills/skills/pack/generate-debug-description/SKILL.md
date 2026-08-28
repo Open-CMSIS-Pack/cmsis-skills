@@ -1,6 +1,6 @@
 ---
 name: generate-debug-description
-description: Add or review non-sequence CMSIS-Pack Debug Description content in an existing Device Family Pack PDSC. Use for debug, debugconfig, dbg_datapatch, debug-port, or access-port definitions after `$debug-access-knowledge` has established the required access facts. Do not collect knowledge, generate or update debugvars, implement device debug sequences, or generate CoreSight trace sequences.
+description: Generate or review verified non-sequence CMSIS debug runtime definitions in either an existing Device Family Pack PDSC or one existing CMSIS-Toolbox `*.cbuild-run.yml` target. Use for debug connection defaults, dormant/SWJ behavior, processor-to-access-port mappings, debug ports, access ports, or data patches after `$debug-access-knowledge` has established the facts; do not collect knowledge, generate variables or sequences, or infer mappings absent from the selected output format.
 ---
 
 # Generate Debug Description
@@ -8,33 +8,33 @@ description: Add or review non-sequence CMSIS-Pack Debug Description content in 
 ## Target & Persona
 
 - **Role:** CMSIS-Pack Tool Integrator and Verification Engineer.
-- **Objective:** Apply every verified non-sequence debug-description definition to the selected existing DFP scope.
+- **Objective:** Apply every verified non-sequence debug definition that has a documented mapping in the selected PDSC or `cbuild-run` destination.
 
 ## Prerequisites & Context
 
-- **Expected input:** An existing target `.pdsc`, selected family/subFamily/device/variant scope, affected `<processor>` descriptions, and a current `.agent-artifacts/<pdsc-stem>.debug-access-knowledge.md` record.
-- **Dependencies:** `$debug-access-knowledge`; `$validate-pdsc-sequence-xml` for common PDSC/XML and block-format validation; the current [Open-CMSIS-Pack *Debug Description* specification](https://open-cmsis-pack.github.io/Open-CMSIS-Pack-Spec/main/html/debug_description.html); and `references/description-contract.md`.
-- **Portability:** Support any existing CMSIS Device Family Pack whose selected scope and debug topology are documented. Do not assume a device family, debug probe, toolchain, or runtime target.
+- **Expected input:** Exactly one existing target `.pdsc` or `*.cbuild-run.yml`, selected PDSC device-tree scope or flattened `cbuild-run` target, affected processors, and a current `.agent-artifacts/<pdsc-stem>.debug-access-knowledge.md` record.
+- **Dependencies:** `$debug-access-knowledge`; for PDSC output, `$apply-confirmed-pdsc-proposal` and `$validate-pdsc-sequence-xml`; for `cbuild-run` output, `$prepare-cbuild-run-change`, `$apply-confirmed-cbuild-run-proposal`, and `$validate-cbuild-run-yaml`; current [Open-CMSIS-Pack *Debug Description* specification](https://open-cmsis-pack.github.io/Open-CMSIS-Pack-Spec/main/html/debug_description.html); current [CMSIS-Toolbox *Build Information Files* specification](https://github.com/Open-CMSIS-Pack/cmsis-toolbox/blob/main/docs/YML-CBuild-Format.md#cbuild-runyml); and the destination contracts in `references/`.
+- **Portability:** Support any existing DFP or `cbuild-run` target whose selected scope and debug topology are documented. A `cbuild-run` change may be an end-user override or a reviewable proving step before a separate Pack update. Do not assume a device family, debug adapter, toolchain, RTOS, or active target.
 
 ## Execution Steps (Strict Workflow)
 
-1. **Analysis:** Locate the target PDSC, selected scope, affected processors, and read-only debug-access knowledge record. Require a current record covering the selected connection and non-sequence definitions; return to `$debug-access-knowledge` when it is absent, blocked, stale, contradictory, or insufficient.
-2. **Processing:** Read `references/description-contract.md` before editing. Translate only verified facts into correctly inherited or local `debugconfig`, `debug`, `debug-port`, `access-port`, and `dbg_datapatch` definitions. Present the debug-access knowledge record and proposed XML, then apply only user-confirmed changes.
-3. **Validation:** Run `$validate-pdsc-sequence-xml` after applying the confirmed change. For a non-sequence-only change, inspect its file-wide block-format matches and record that the change introduced no C-like block content; resolve every relevant validation failure.
-4. **Formatting:** Report emitted definitions, placement and applicability, sources, confidence, unresolved items, and validation results.
+1. **Analysis:** Identify the destination from the explicit target path and require exactly one of `pdsc` or `cbuild-run`. Read the debug-access record and `references/description-contract.md`. Require current facts covering the selected connection and non-sequence definitions; return to `$debug-access-knowledge` when the record is absent, blocked, stale, contradictory, or insufficient.
+2. **Processing:** Assemble one destination-neutral definition set containing connection defaults, SWJ/dormant behavior, debug ports, access ports, processor mappings, and data patches. For PDSC, read `references/pdsc-output.md` and render inherited/local XML. For `cbuild-run`, read `references/cbuild-run-output.md`, run `$prepare-cbuild-run-change`, and render only documented flattened YAML mappings. Report unsupported destination mappings instead of approximating them.
+3. **Validation:** Present the referenced knowledge record, semantic definition set, exact rendered change, preserved content, and output-specific overwrite or regeneration risk; obtain confirmation. Apply through the destination-specific application skill. Run its common validator, then compare every rendered field with the semantic set and evidence; resolve every relevant failure.
+4. **Formatting:** Report destination, emitted definitions, placement or merge identities, applicability, sources, confidence, unsupported mappings, unresolved items, regeneration risk when applicable, and validation results.
 
 ## Guardrails & Constraints (Strict Rules)
 
-- **No fabrication:** Do not invent topology facts, addresses, protocols, patches, values, or applicability. Return missing or contradictory hardware facts to `$debug-access-knowledge`.
-- **Portability:** Do not introduce a device-family, debugger, toolchain, or runtime-target dependency unless authoritative inputs require it. Identify each required dependency in the output.
-- **Critical blockers:** Stop when no existing device description exists, the knowledge record is inadequate, user confirmation is absent, or XML/PDSC validation fails.
-- **Scope:** Generate only non-sequence definitions. Preserve `debugvars`, debug sequences, trace sequences, and unrelated PDSC content; direct runtime choices to the appropriate sequence skill.
+- **No fabrication:** Do not invent topology facts, addresses, protocols, patches, values, applicability, output mappings, or YAML fields.
+- **Portability:** Do not introduce a device-family, debugger, toolchain, build-system, or RTOS dependency unless authoritative inputs require it.
+- **Critical blockers:** Stop when no existing destination exists, the destination is ambiguous, the knowledge record is inadequate, target identity conflicts, a required mapping is undocumented, confirmation is absent, or destination validation fails.
+- **Scope:** Generate only non-sequence definitions. Preserve debug variables, debug sequences, trace sequences, and unrelated destination content; direct runtime choices to `$manage-debug-variables` and sequence behavior to the appropriate generator.
 - **Tone and style:** Respond factually and directly. Omit conversational filler.
 
 ## Expected Output
 
-Apply the confirmed non-sequence PDSC definitions and report their XML placement, applicability, evidence, unresolved items, and validation results.
+Apply the confirmed non-sequence definitions to exactly one PDSC or `cbuild-run` target and report their placement or merge identities, applicability, evidence, unsupported mappings, unresolved items, and validation results.
 
 ## Validation Resources
 
-Read [the debug-description contract](references/description-contract.md) in full before editing. It defines grammar authority, placement rules, confirmation requirements, and the required `$validate-pdsc-sequence-xml` handoff.
+Read [the common description contract](references/description-contract.md) and exactly one of [the PDSC output contract](references/pdsc-output.md) or [the cbuild-run output contract](references/cbuild-run-output.md) before rendering. Use the selected destination validator for common syntax and structure, then cross-check semantic fidelity against the debug-access record.
