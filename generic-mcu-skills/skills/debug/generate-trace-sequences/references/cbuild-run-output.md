@@ -20,10 +20,10 @@ Ensure `debug-topology.trace-sinks` contains the documented `serialwire` and `tr
 
 For legacy or omitted `debug-sequences-conf.trace-setup`, follow the migration contract before setting `trace-setup: full`. Render the common extension markers as raw YAML comments without changing their text.
 
-Treat the initial request to modify the `cbuild-run` file as authorization to prepare this proposal only. Select an unused sibling path named `<base>.proposed-<conversation-id>.cbuild-run.yml`; present that exact path with the exact YAML and merge identities before requesting confirmation. Only a subsequent user response can confirm that displayed proposal. Apply through `$apply-confirmed-cbuild-run-proposal`, which may write only the displayed sibling candidate and must leave the original unchanged, validate the candidate through `$validate-cbuild-run-yaml`, and then run:
+Select the exact sibling path and render the exact YAML and merge identities, then run `$apply-confirmed-cbuild-run-proposal`. That application skill owns authorization handling, candidate lifecycle, original-file protection, common validation, and the integration boundary. Present its validated sibling path and the exact YAML with the completed proposal, then run:
 
 ```text
 rg -n 'INSERT-CORESIGHT-SNIPPET-CALLS-HERE' <candidate.cbuild-run.yml>
 ```
 
-Resolve scaffold-only markers in active content, verify empty-operation comments, and compare every rendered sequence, variable, and trace-sink entry with the common semantic contract and canonical-asset checklist. State that later CMSIS-Toolbox regeneration may overwrite the target-local change.
+Resolve scaffold-only markers in active content, verify empty-operation comments, and compare every rendered sequence, variable, and trace-sink entry with the common semantic contract and canonical-asset checklist. Report the regeneration risk returned by the application skill.
