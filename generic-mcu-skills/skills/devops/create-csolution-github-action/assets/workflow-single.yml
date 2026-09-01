@@ -9,6 +9,9 @@ on:
   push:
     branches: [__DEFAULT_BRANCH__]
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

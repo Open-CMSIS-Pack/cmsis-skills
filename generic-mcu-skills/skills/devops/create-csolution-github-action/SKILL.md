@@ -61,6 +61,7 @@ Replace every `__NAME__` token in the selected asset.
 - Derive `<solution-name>` from the `*.csolution.yml` stem, lowercased with unsupported filename characters replaced by `-`.
 - Use the solution directory as `working-directory`.
 - Insert solution paths, target names, FVP models, and FVP config files directly where they are used. Do not add `env:` aliases for these values.
+- Limit the workflow token to read-only repository contents with top-level `permissions: contents: read`.
 - Always add `ARM-software/cmsis-actions/armlm@v1` without inputs. Note that its default license setup is for evaluation only.
 - Let `cbuild --packs` install all required public packs. Do not add `cpackget init`, `cpackget update-index`, or local-pack registration.
 - In a single-target build-only workflow, remove the FVP run and output-check steps and omit `fvp.log` from the uploaded paths.
@@ -72,8 +73,9 @@ Replace every `__NAME__` token in the selected asset.
 1. Parse the completed workflow with a YAML parser. Run `actionlint` when it is already installed; do not install it.
 2. Verify the solution, active target, every matrix target, manifest path, and FVP config path against the project.
 3. Confirm that non-FVP rows have `fvp: ""` and cannot execute FVP steps.
-4. Search for unresolved `__NAME__` tokens and machine-specific absolute paths.
-5. Run `git diff --check`. Do not commit, push, or trigger the workflow unless separately requested.
+4. Confirm the workflow has top-level `permissions: contents: read` and grants no additional permissions.
+5. Search for unresolved `__NAME__` tokens and machine-specific absolute paths.
+6. Run `git diff --check`. Do not commit, push, or trigger the workflow unless separately requested.
 
 ## Guardrails & Constraints (Strict Rules)
 
