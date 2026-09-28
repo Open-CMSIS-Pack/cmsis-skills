@@ -25,8 +25,9 @@ description: Verify the CMSIS tools environment exported by the CMSIS Solution e
 
 ### Detailed procedure
 
-1. From the workspace root, check for `.cmsis/tools-environment.yml` before
-   running `cbuild`.
+1. Before running `cbuild`, directly test whether
+   `.cmsis/tools-environment.yml` exists in the workspace root; do not infer
+   absence from a file listing.
 2. When the file exists:
    - Parse it as YAML. Require one `cmsis-tools-environment` mapping containing
      string `version`, `generated-by`, and `solution` values; an `environment`
@@ -64,6 +65,8 @@ description: Verify the CMSIS tools environment exported by the CMSIS Solution e
    entries and treat their exact artifact versions as the intended workspace
    tools. Arm Tools Environment Manager activation is local to its VS Code
    instance and is not inherited by every shell or agent process.
+   If the manifest is absent, still check the VS Code CMSIS Solution extension
+   for its bundled toolbox before failing.
 4. In that fallback case, reproduce the already-installed workspace environment
    in the current process:
    - Locate each exact requested artifact in the local vcpkg artifact store. Do
