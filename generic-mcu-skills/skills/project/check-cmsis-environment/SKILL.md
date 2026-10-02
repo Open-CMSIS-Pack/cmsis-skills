@@ -1,6 +1,6 @@
 ---
 name: check-cmsis-environment
-description: Verify CMSIS-Toolbox, its CMake and Ninja build environment, and the available compiler toolchains with cbuild. Use before creating or building a CMSIS solution project.
+description: Verify the CMSIS tools environment exported by the CMSIS Solution extension, CMSIS-Toolbox, CMake, Ninja, and available compiler toolchains. Use before creating or building a CMSIS solution project.
 ---
 
 # Check CMSIS Environment
@@ -12,26 +12,63 @@ description: Verify CMSIS-Toolbox, its CMake and Ninja build environment, and th
 
 ## Prerequisites & Context
 
-- **Expected input:** The workspace root and, when present, its `vcpkg-configuration.json` manifest.
+- **Expected input:** The workspace root and, when present, its `.cmsis/tools-environment.yml` and `vcpkg-configuration.json` files.
 - **Dependencies:** An already installed CMSIS-Toolbox `cbuild` executable, CMake, Ninja, and compiler artifacts. The Arm Tools Environment Manager and the CMSIS Solution extension are optional discovery sources, not required tools.
 - **Portability:** Applies to CMSIS solution workspaces on supported host operating systems. It has no MCU-, RTOS-, debugger-, or board-specific assumptions; compiler registrations are discovered from the workspace environment.
 
 ## Execution Steps (Strict Workflow)
 
-1. **Analysis:** Inspect the workspace manifest and the already-installed tool artifacts it selects.
-2. **Processing:** Reproduce the selected tool environment only in the current process, then run the detailed checks below.
+1. **Analysis:** Inspect the generated CMSIS tools environment or, when it is absent, the workspace manifest and already-installed tool artifacts it selects.
+2. **Processing:** Import or reproduce the selected tool environment only in the current process, then run the detailed checks below.
 3. **Validation:** Confirm `cbuild`, CMake, Ninja, and the required compiler toolchain through the listed `cbuild` commands.
 4. **Formatting:** Return the defined `PASS` or `FAIL` report with the observed paths, versions, and missing requirements.
 
 ### Detailed procedure
 
-1. From the workspace root, check for `vcpkg-configuration.json` before running
-   `cbuild`.
-2. When the file exists, read its `requires` entries and treat their exact
-   artifact versions as the intended workspace tools. Arm Tools Environment
-   Manager activation is local to its VS Code instance and is not inherited by
-   every shell or agent process.
-3. Reproduce the already-installed workspace environment in the current process:
+1. Before running `cbuild`, directly test whether
+   `.cmsis/tools-environment.yml` exists in the workspace root; do not infer
+   absence from a file listing.
+2. When the file exists:
+   - Parse it as YAML. Require one `cmsis-tools-environment` mapping containing
+     string `version`, `generated-by`, and `solution` values; an `environment`
+     mapping with a string array `path` and a string-to-string mapping
+     `variables`; and a `tools` array whose consumed entries contain string
+     `name`, `origin`, and `directory` values plus a `provider` mapping. Stop
+     when YAML parsing fails or any consumed field has the wrong structure. Do
+     not infer or consume unknown fields.
+   - When an active `arm.cmsis-csolution` extension installation is available,
+     use `schemas/tools-environment.schema.json` beneath its installation
+     directory. Read the accepted `cmsis-tools-environment.version` constraint
+     from that schema; do not hardcode a format version. Perform full schema
+     validation when the schema accepts the document version. Otherwise report
+     why full validation was skipped and continue with the consumed-field
+     validation above. Record whether the installed extension version agrees
+     with `generated-by`; a missing installation or version mismatch is
+     diagnostic information, not a failure.
+   - Resolve `cmsis-tools-environment.solution` relative to the generated file
+     and confirm that it identifies the solution being checked. Stop when it
+     resolves outside the workspace, does not exist, or identifies a different
+     solution.
+   - Treat `environment.path`, `environment.variables`, and `tools` as the
+     extension-resolved source of truth. Do not rediscover precedence from the
+     vcpkg artifact store or choose another installation when this file is
+     valid.
+   - Prepend the listed `environment.path` entries to the current process
+     `PATH` in their listed order, preserving their precedence, and export every
+     `environment.variables` entry process-locally. Do not persist variables or
+     edit the generated file; the CMSIS Solution extension is its sole writer.
+   - Confirm that every imported path exists. For each `tools` entry, record its
+     name, version when present, origin, provider, and directory, and confirm
+     that its directory exists. Stop on a missing path or tool directory.
+3. Only when `.cmsis/tools-environment.yml` is absent, check for
+   `vcpkg-configuration.json`. When the manifest exists, read its `requires`
+   entries and treat their exact artifact versions as the intended workspace
+   tools. Arm Tools Environment Manager activation is local to its VS Code
+   instance and is not inherited by every shell or agent process.
+   If the manifest is absent, still check the VS Code CMSIS Solution extension
+   for its bundled toolbox before failing.
+4. In that fallback case, reproduce the already-installed workspace environment
+   in the current process:
    - Locate each exact requested artifact in the local vcpkg artifact store. Do
      not acquire, download, install, update, or select a different version. Stop
      when an artifact is absent or when its location is ambiguous.
@@ -48,19 +85,24 @@ description: Verify CMSIS-Toolbox, its CMake and Ninja build environment, and th
      CMSIS-Toolbox installation's configuration directory.
    Keep all exported variables process-local; do not modify persistent user or
    system settings.
-4. Resolve the effective `cbuild` executable and run `cbuild --version`. Confirm
+5. Resolve the effective `cbuild` executable and run `cbuild --version`. Confirm
    that the command succeeds and record both its path and reported
-   CMSIS-Toolbox version. Stop when `cbuild` is unavailable.
-5. Run `cbuild list environment`. Record the reported environment and confirm
-   that CMake and Ninja are both found.
-6. Run `cbuild list toolchains`. Record every detected compiler identifier and
+  CMSIS-Toolbox version. Stop when `cbuild` is unavailable. When the generated
+  file lists CMSIS-Toolbox, confirm that the effective executable comes from
+  its selected directory and that the reported version matches the listed
+  version.
+6. Run `cbuild list environment`. Record the reported environment and confirm
+  that CMake and Ninja are both found.
+7. Run `cbuild list toolchains`. Record every detected compiler identifier and
    version. Use `cbuild list toolchains --verbose` to verify compiler paths and
    registration variables.
 
 Return `PASS` only when `cbuild` is available, CMake and Ninja are found, and at
-least one compiler toolchain is detected. When the manifest requests a compiler,
-also require `cbuild list toolchains` to report that compiler and requested
-version.
+least one compiler toolchain is detected. When the generated environment
+identifies a compiler through `tools` or a compiler registration variable, also
+require `cbuild list toolchains` to report that compiler and version. When the
+manifest fallback is used and requests a compiler, require the reported compiler
+and version to match that request.
 
 ## Missing Tools
 
@@ -75,10 +117,17 @@ skill.
   follow the CMSIS-Toolbox compiler toolchain instructions.
 - When a requested vcpkg artifact is not already installed, return `FAIL` and ask
   the user to activate or repair the workspace environment outside this skill.
+- When `.cmsis/tools-environment.yml` has structural errors in fields consumed
+  by this skill, is stale, or references missing paths, return `FAIL` and ask
+  the user to convert the solution or reactivate the tools environment in the
+  CMSIS Solution extension. An unavailable schema, extension-version mismatch,
+  or document-version mismatch alone is a warning, not a failure. Do not
+  silently fall back to `vcpkg-configuration.json` when the generated file
+  exists but is unusable.
 
 After the user completes the external setup, restart from the
-`vcpkg-configuration.json` check and repeat the complete workflow. VS Code is an
-optional setup method and is not required by this skill.
+`.cmsis/tools-environment.yml` check and repeat the complete workflow. VS Code
+is an optional setup method and is not required by this skill.
 
 ## Guardrails & Constraints (Strict Rules)
 
@@ -93,9 +142,13 @@ optional setup method and is not required by this skill.
 Report:
 
 - status: `PASS` or `FAIL`;
-- workspace `vcpkg-configuration.json` path and requested artifacts, or report
-  that no manifest exists;
-- process-local environment entries imported from installed artifacts;
+- workspace `.cmsis/tools-environment.yml` path, format version, generator,
+  resolved solution, selected tools, schema-validation level, and any extension
+  provenance mismatch, or report that no generated environment exists and the
+  fallback was used;
+- fallback `vcpkg-configuration.json` path and requested artifacts, when used;
+- process-local environment entries and whether they came from the generated
+  environment or fallback artifact discovery;
 - effective `cbuild` path and CMSIS-Toolbox version;
 - CMake and Ninja detection results from `cbuild list environment`;
 - detected compiler identifiers and versions from `cbuild list toolchains`;
@@ -104,6 +157,10 @@ Report:
 
 ## Validation Resources
 
+- CMSIS tools environment format, when the extension is installed:
+  `<active-arm.cmsis-csolution-extension>/schemas/tools-environment.md`
+- CMSIS tools environment schema, when the extension is installed:
+  `<active-arm.cmsis-csolution-extension>/schemas/tools-environment.schema.json`
 - [CMSIS-Toolbox build tools](https://open-cmsis-pack.github.io/cmsis-toolbox/build-tools/)
 - [CMSIS-Toolbox installation](https://open-cmsis-pack.github.io/cmsis-toolbox/installation/)
 - [CMSIS-Toolbox compiler toolchains](https://open-cmsis-pack.github.io/cmsis-toolbox/installation/#compiler-toolchains)
