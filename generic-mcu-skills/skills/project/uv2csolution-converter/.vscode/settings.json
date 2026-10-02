@@ -1,0 +1,12 @@
+{
+    "yaml.schemas": {
+        "file:///Users/chrsei01/.vscode/extensions/arm.cmsis-sds-0.11.1-main25-g265bafd/schema/sds.schema.json": [
+            "**/*.sds.yml",
+            "**/*.sds.yaml"
+        ],
+        "file:///Users/chrsei01/.vscode/extensions/arm.cmsis-sds-0.11.1-main25-g265bafd/schema/sdsio.schema.json": [
+            "**/*.sdsio.yml",
+            "**/*.sdsio.yaml"
+        ]
+    }
+}
