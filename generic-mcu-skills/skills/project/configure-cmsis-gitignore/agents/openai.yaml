@@ -1,0 +1,4 @@
+interface:
+  display_name: "CMSIS: Configure Gitignore"
+  short_description: "Add verified CMSIS build-output ignore rules"
+  default_prompt: "Use $configure-cmsis-gitignore to create or merge a CMSIS-specific .gitignore for my solution, preserving existing rules and required project inputs, and validate the result with Git."

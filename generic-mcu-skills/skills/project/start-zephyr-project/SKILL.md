@@ -1,6 +1,6 @@
 ---
 name: start-zephyr-project
-description: Create an initial CMSIS Zephyr Blinky solution for a board already supported by Zephyr. Use when the Zephyr and CMSIS environments, exact Zephyr board target, and matching CMSIS BSP or DFP must be verified and combined into a west-integrated CMSIS solution.
+description: Create an initial CMSIS Zephyr Blinky solution with a validated CMSIS-specific .gitignore for a board already supported by Zephyr. Use when the Zephyr and CMSIS environments, exact Zephyr board target, and matching CMSIS BSP or DFP must be verified and combined into a west-integrated CMSIS solution.
 ---
 
 # Start Zephyr Project
@@ -13,7 +13,7 @@ description: Create an initial CMSIS Zephyr Blinky solution for a board already 
 ## Prerequisites & Context
 
 - **Expected input:** A solution directory, the physical board and exact Zephyr target, verified CMSIS and Zephyr environment results, verified CMSIS BSP/DFP identifiers, and a selected installed CMSIS compiler when more than one is available.
-- **Dependencies:** The four sibling skills linked below; CMSIS-Toolbox `cbuild` 2.14.0 or later; an existing Zephyr workspace and its virtual environment; the bundled solution and Blinky assets; and publicly available CMSIS packs when `cbuild --packs` needs them.
+- **Dependencies:** The five sibling skills linked below; Git for ignore-rule validation; CMSIS-Toolbox `cbuild` 2.14.0 or later; an existing Zephyr workspace and its virtual environment; the bundled solution and Blinky assets; and publicly available CMSIS packs when `cbuild --packs` needs them.
 - **Portability:** Applies to Zephyr-supported boards with verified CMSIS BSP or DFP support. It depends on CMSIS-Toolbox west integration and uses GCC-specific libc settings only when GCC is selected; it does not require the Zephyr SDK, sysbuild, or a particular debugger.
 
 ## Execution Steps (Strict Workflow)
@@ -33,6 +33,7 @@ Apply these sibling skills in order:
 4. [identify-cmsis-board-support](../identify-cmsis-board-support/SKILL.md)
 5. Create the Blinky solution using Zephyr as described below.
 6. Validate the generated solution with `cbuild`.
+7. Apply [configure-cmsis-gitignore](../configure-cmsis-gitignore/SKILL.md) using the generated build metadata to create or merge a solution-local .gitignore. Retain the Zephyr application, pack lock, RTE configuration, and user-managed `.vscode.d/` drop-ins. Use the skill's upstream-reference policy to distinguish disposable context headers and generated IDE files from shared settings; retain them by default when no policy is established. Do not initialize a Git repository; use the skill's temporary-fixture validation when needed. Report ignore-configuration blockers separately from setup and compilation results.
 
 Accept an existing result instead of repeating a prerequisite only when its paths,
 tool versions, physical board, and other relevant inputs still describe the current
@@ -198,9 +199,13 @@ retry a failed check with a modified command.
 ## Expected Output
 
 Produce an initial `<solution-directory>/zephyr.csolution.yml` and self-contained
-`<solution-directory>/blinky` Zephyr application without unresolved tokens.
+`<solution-directory>/blinky` Zephyr application without unresolved tokens, plus
+a validated `<solution-directory>/.gitignore` created or merged by
+`configure-cmsis-gitignore`.
 Summarize the environment versions, exact Zephyr target, fitted device, CMSIS
-match type, CMSIS identifiers, selected packs, setup status, and build status.
+match type, CMSIS identifiers, selected packs, setup status, build status, and
+ignore-rule validation status. Do not report overall success if ignore-rule
+validation is blocked or fails, even when setup and compilation succeed.
 
 ## Validation Resources
 
