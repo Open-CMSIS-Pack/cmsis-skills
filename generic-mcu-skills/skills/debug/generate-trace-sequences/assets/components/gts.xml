@@ -1,0 +1,39 @@
+<!-- CMSIS-Pack GTS template. Replace __INSTANCE_INDEX__ with the stable numeric instance suffix. -->
+<cmsis-pack-trace-snippet component="GTS">
+  <debugvars>
+    // Global Timestamp Generator
+    __var GTS___INSTANCE_INDEX___ADDRESS   = 0x00000000; // Set the implemented generator base address
+    __var GTS___INSTANCE_INDEX___AP        = 0x00000000;
+    __var GTS___INSTANCE_INDEX___FREQUENCY = 0x00000000; // Nonzero writes the informational frequency to CNTFID0
+    __var GTS___INSTANCE_INDEX___HDBG      = 0x00000000; // Pause on HDBG; signal routing is device-specific
+  </debugvars>
+
+  <sequence name="CS_GTS___INSTANCE_INDEX___Configure">
+    <block>
+      // Helper variables
+      __var savedAP     = __ap;
+      __var cntcrValue  = 1;                              // CNTCR.EN=1
+
+      Message(0, "Begin CS_GTS___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", GTS___INSTANCE_INDEX___ADDRESS, GTS___INSTANCE_INDEX___AP);
+
+      __ap   = GTS___INSTANCE_INDEX___AP;
+      Write32(GTS___INSTANCE_INDEX___ADDRESS + 0x000, 0x0);                // Disable timestamp generator
+    </block>
+    <control if="GTS___INSTANCE_INDEX___FREQUENCY != 0">
+      <block>
+        Write32(GTS___INSTANCE_INDEX___ADDRESS + 0x020, GTS___INSTANCE_INDEX___FREQUENCY);  // CNTFID0: Informational counter frequency
+      </block>
+    </control>
+    <control if="GTS___INSTANCE_INDEX___HDBG != 0">
+      <block>
+        cntcrValue |= 0x2;                                // CNTCR.HDBG=1
+      </block>
+    </control>
+    <block>
+      Write32(GTS___INSTANCE_INDEX___ADDRESS + 0x000, cntcrValue);         // Write control bits and enable generator
+
+      __ap = savedAP;
+      Message(0, "End CS_GTS___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", GTS___INSTANCE_INDEX___ADDRESS, GTS___INSTANCE_INDEX___AP);
+    </block>
+  </sequence>
+</cmsis-pack-trace-snippet>
