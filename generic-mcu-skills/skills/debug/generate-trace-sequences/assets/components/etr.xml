@@ -30,7 +30,7 @@
       Message(0, "Begin CS_ETR___INSTANCE_INDEX___Configure_CircularBuffer @0x%08X, AP 0x%08X", ETR___INSTANCE_INDEX___ADDRESS, ETR___INSTANCE_INDEX___AP);
       __ap = ETR___INSTANCE_INDEX___AP;                                                           // Set AP
 
-      // Configure ETR to HW FIFO for Sync Trace
+      // Configure ETR for circular-buffer trace capture.
       Write32(ETR___INSTANCE_INDEX___ADDRESS + 0x020, 0x00000000);                                // Disable ETR before configuring
       etrStatus = Read32(ETR___INSTANCE_INDEX___ADDRESS + 0x00C);
     </block>
@@ -43,7 +43,9 @@
       // Configure
       Write32(ETR___INSTANCE_INDEX___ADDRESS + 0x028, 0x00000000);                                // Set Circular Buffer mode
       Write32(ETR___INSTANCE_INDEX___ADDRESS + 0x034, 0x00000000);                                // Watermark: Set threshold vacancy to 0 to use full buffer
-      Write32(ETR___INSTANCE_INDEX___ADDRESS + 0x304, 0x00000003);                                // FFCR: Enable Formatter and Trigger Insertion
+      ffcrValue  = Read32(ETR___INSTANCE_INDEX___ADDRESS + 0x304);
+      ffcrValue |= 0x00000003;                                                                   // FFCR: Enable Formatter and Trigger Insertion
+      Write32(ETR___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
       Write32(ETR___INSTANCE_INDEX___ADDRESS + 0x01C, ETR___INSTANCE_INDEX___TRIGGER_COUNT);      // TRG: Number of words to capture after trigger
       Write32(ETR___INSTANCE_INDEX___ADDRESS + 0x308, ETR___INSTANCE_INDEX___SYNCCNT);            // Set PSCR
       Write32(ETR___INSTANCE_INDEX___ADDRESS + 0x018, ETR___INSTANCE_INDEX___BUFFER_ADDRESS);     // Init RwP
@@ -73,7 +75,7 @@
 
       __ap = ETR___INSTANCE_INDEX___AP;                                                           // Set AP
       ffcrValue  = Read32(ETR___INSTANCE_INDEX___ADDRESS + 0x304);
-      ffcrValue |= 0x00000002;                                                                    // FFCR: Enable Formatter
+      ffcrValue |= 0x00000003;                                                                    // FFCR: Enable Formatter and Trigger Insertion
       Write32(ETR___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
       Write32(ETR___INSTANCE_INDEX___ADDRESS + 0x01C, ETR___INSTANCE_INDEX___TRIGGER_COUNT);      // TRG: Number of words to capture after trigger
       Write32(ETR___INSTANCE_INDEX___ADDRESS + 0x308, ETR___INSTANCE_INDEX___SYNCCNT);            // Set PSCR
@@ -105,7 +107,7 @@
       __ap = ETR___INSTANCE_INDEX___AP;  // Set AP
     </block>
     <block>
-      // Flush ETR first so the HW FIFO drains towards the TPIU.
+      // Flush the ETR formatter and stop capture.
       ffcrValue = Read32(ETR___INSTANCE_INDEX___ADDRESS + 0x304);
       ffcrValue &amp;= ~(0x00001040);    // Clear StopOnFlush and FlushOnManual
       ffcrValue |= 0x00001000;           // Stop after the manual flush completes
@@ -188,7 +190,7 @@
           // named buffers specified in PDSC. Decide which xxx_Read_Buffer sequence to call based
           // on TraceBufferSelected().
           bytesStreamed = BufferStreamOut(0, 0, bytesToRead, "", 1, 0);
-          Message(0, "Streamed %d of %d ETR trace bytes", bytesStreamed, bytesToRead);
+          Message(0, "Streamed %llu of %llu ETR trace bytes", bytesStreamed, bytesToRead);
         </block>
       </control>
       <control if="bytesToRead == 0">
