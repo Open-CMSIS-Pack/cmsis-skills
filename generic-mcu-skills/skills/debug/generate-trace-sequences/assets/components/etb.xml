@@ -28,7 +28,9 @@
     </control>
     <block>
       // Configure
-      Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x304, 0x00000003);  // FFCR: Enable Formatter and Trigger Insertion
+      ffcrValue  = Read32(ETB___INSTANCE_INDEX___ADDRESS + 0x304);
+      ffcrValue |= 0x00000003;                                     // FFCR: Enable Formatter and Trigger Insertion
+      Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x01C, ETB___INSTANCE_INDEX___TRIGGER_COUNT); // TRG: Number of words to capture after trigger
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x018, 0x00000000);  // Init RwP
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x014, 0x00000000);  // Init RRP
@@ -51,7 +53,7 @@
 
       __ap = ETB___INSTANCE_INDEX___AP;                             // Set AP
       ffcrValue  = Read32(ETB___INSTANCE_INDEX___ADDRESS + 0x304);
-      ffcrValue |= 0x00000002;                                      // FFCR: Enable Formatter
+      ffcrValue |= 0x00000003;                                      // FFCR: Enable Formatter and Trigger Insertion
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x01C, ETB___INSTANCE_INDEX___TRIGGER_COUNT); // TRG: Number of words to capture after trigger
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x018, 0x00000000);  // Init RwP
@@ -170,7 +172,7 @@
           // named buffers specified in PDSC. Decide which xxx_Read_Buffer sequence to call based
           // on TraceBufferSelected().
           bytesStreamed = BufferStreamOut(0, 0, bytesToRead, "", 1, 0);
-          Message(0, "Streamed %d of %d ETB trace bytes", bytesStreamed, bytesToRead);
+          Message(0, "Streamed %llu of %llu ETB trace bytes", bytesStreamed, bytesToRead);
         </block>
       </control>
       <control if="bytesToRead == 0">

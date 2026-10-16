@@ -24,7 +24,7 @@
       <block>
         // Calculate SWO prescaler value based on provided trace clock frequencies.
         prescaler = (__traceclockin / __traceclockout) - 1;
-        Message(0, "Calculated SWO prescaler value: %d", prescaler);
+        Message(0, "Calculated SWO prescaler value: %u", prescaler);
       </block>
     </control>
     <block>
