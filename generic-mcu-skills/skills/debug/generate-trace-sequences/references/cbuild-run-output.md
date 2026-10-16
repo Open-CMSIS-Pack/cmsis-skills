@@ -26,4 +26,4 @@ Select the exact sibling path and render the exact YAML and merge identities, th
 rg -n 'INSERT-CORESIGHT-SNIPPET-CALLS-HERE' <candidate.cbuild-run.yml>
 ```
 
-Resolve scaffold-only markers in active content, verify empty-operation comments, and compare every rendered sequence, variable, and trace-sink entry with the common semantic contract and canonical-asset checklist. Report the regeneration risk returned by the application skill.
+Resolve scaffold-only markers in active content. Compare every rendered sequence, variable, and trace-sink entry with the common semantic contract and canonical-asset checklist. Report the regeneration risk returned by the application skill.
