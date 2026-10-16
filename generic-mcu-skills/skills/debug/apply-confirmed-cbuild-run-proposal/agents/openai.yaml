@@ -1,0 +1,4 @@
+interface:
+  display_name: "CMSIS: Write CBuild Run Proposal"
+  short_description: "Write and validate a cbuild-run proposal"
+  default_prompt: "Use $apply-confirmed-cbuild-run-proposal to create or update this conversation's validated cbuild-run candidate."

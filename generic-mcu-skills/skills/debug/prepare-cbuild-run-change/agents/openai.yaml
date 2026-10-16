@@ -1,0 +1,4 @@
+interface:
+  display_name: "CMSIS: Prepare CBuild Run Change"
+  short_description: "Prepare a safe cbuild-run debug change"
+  default_prompt: "Use $prepare-cbuild-run-change to scope this change to an existing cbuild-run file."
