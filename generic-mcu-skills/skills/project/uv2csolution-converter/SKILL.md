@@ -1,6 +1,6 @@
 ---
 name: uv2csolution-converter
-description: Convert a Keil MDK µVision project or workspace to a buildable Open-CMSIS-Pack CMSIS Csolution project. Use for `.uvprojx` or `.uvmpw` migration, incomplete `uv2csolution` output, TrustZone project dependencies, RTE regeneration, or conversion-related CMSIS-Toolbox failures.
+description: Convert uVision multi-project workspace to CMSIS-Toolbox format.
 ---
 
 # Convert µVision to Csolution
