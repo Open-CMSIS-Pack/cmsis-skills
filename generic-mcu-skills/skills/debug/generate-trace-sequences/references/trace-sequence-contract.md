@@ -2,15 +2,13 @@
 
 ## Shared integration ownership
 
-Use `.agent-artifacts/<pdsc-stem>.trace-knowledge.md` from `$trace-knowledge` as read-only input. Consult `.agent-artifacts/<pdsc-stem>.debug-access-knowledge.md` from `$debug-access-knowledge` only when implementation requires a processor, debug connection, DP/AP path, protocol, or dormant-state fact not supplied by the trace record. Run `$manage-debug-variables` for documented runtime choices. The selected output contract owns preparation, rendering, application, and common validation.
+Use `.agent-artifacts/<pdsc-stem>.trace-knowledge.md` from `$trace-knowledge` as read-only input. Consult `.agent-artifacts/<pdsc-stem>.debug-access-knowledge.md` from `$debug-access-knowledge` only when implementation requires a processor, debug connection, DP/AP path, protocol, or dormant-state fact not supplied by the trace record. The selected output contract owns preparation, rendering, application, and common validation.
 
 Use the current [Open-CMSIS-Pack *Debug Description* specification](https://open-cmsis-pack.github.io/Open-CMSIS-Pack-Spec/main/html/debug_description.html) as the sequence-language authority. Its `Sequence("name")` function calls another debug access sequence, and a supplied predefined sequence replaces the debugger-provided behavior. Use the current [CMSIS-Toolbox *Build Information Files* specification](https://github.com/Open-CMSIS-Pack/cmsis-toolbox/blob/main/docs/YML-CBuild-Format.md#cbuild-runyml) for YAML field and nesting rules.
 
 ## Required semantic output
 
 Always generate full trace setup: the emitted sequences configure each selected trace sink and data path rather than relying on debugger a-priori CoreSight configuration. Trace setup is device-level by default. Unless the user narrows scope, cover all processors and all evidence-backed trace paths in the selected PDSC subtree or flattened `cbuild-run` target.
-
-Configure every evidenced path by default. When an end-user choice is documented, emit or update a debug variable with a supported initial value. If an existing or source-provided value is supported but evidence does not establish a better default, retain it, continue generation, and inform the user that it is configurable and not established as optimal. For PDSC output, also propose matching Configuration Wizard annotations in `.dbgconf`; do not edit `.dbgconf` without explicit confirmation.
 
 Preserve these extension markers exactly in the destination representation defined by the output contract:
 
@@ -33,15 +31,19 @@ TraceStop:    mode-specific CoreSight stop helpers -> device-specific region
 
 Enable trace clocks in `DebugDeviceUnlock` before auto-detection unless evidence or explicit direction requires otherwise. Also configure trace clocks in the device-specific region of `TraceStart`, before CoreSight start helpers, because unlock-time clock state may not survive reset.
 
-`TraceCapture` calls `DoTraceFlush` exactly once before preparing any components for the next capture. Component capture sequences must not call `DoTraceFlush`; otherwise, a multi-component route is flushed repeatedly while it is being reconfigured. The debugger calls `TraceFlush` before `TraceStop`. A verified sequence may reuse `DoTraceFlush_<mode>`, but `TraceStop` and `DoTraceStop_<mode>` must not call `DoTraceFlush` or a `DoTraceFlush_<mode>` helper again.
+`TraceCapture` flushes the active trace route exactly once before preparing any components for the next capture. Component capture sequences must not call `DoTraceFlush`; otherwise, a multi-component route is flushed repeatedly while it is being reconfigured. The debugger calls `TraceFlush` before `TraceStop`. A verified sequence may reuse `DoTraceFlush_<mode>`, but `TraceStop` and `DoTraceStop_<mode>` must not call `DoTraceFlush` or a `DoTraceFlush_<mode>` helper again.
 
 ## Component selection and placement
 
 Map the selected target, its processors, and every evidence-backed trace path. For PDSC, group descendants with identical verified configuration at their topmost selected common ancestor and put only proven deviations on leaves. For `cbuild-run`, emit only the flattened target and its processors.
 
-Select one canonical XML asset per required physical CoreSight instance. Omit unused assets, variables, and calls. Merge every selected asset's variable contribution through `$manage-debug-variables`; identical names require identical meaning and value, otherwise stop for direction.
+Select one canonical XML asset per required physical CoreSight instance. Omit unused assets and calls. Merge the selected assets' global variable contributions by name; identical names require identical meaning and value, otherwise stop for direction.
+
+Use `$manage-debug-variables` for documented runtime choices. Retain a supported existing or source-provided initial value when evidence does not establish a better default, and report that it is configurable and not established as optimal. For PDSC output, also propose matching Configuration Wizard annotations in `.dbgconf`; do not edit `.dbgconf` without explicit confirmation.
 
 Number non-predefined sequences by component type from `0` in ascending verified base-address order while preserving existing numbers: `CS_<COMPONENT>_0_*`, `CS_<COMPONENT>_1_*`, and so on. Use `CS_<COMPONENT>_<instance>_<operation>[_<subvariant>]`, and rename every sequence and `Sequence("...")` call consistently.
+
+In `catu.xml`, substitute the CATU's own index for `__INSTANCE_INDEX__` and its connected ETR's index for `__ETR_INSTANCE_INDEX__`, using the verified trace route. Number the component types independently: CATU 0 may reference ETR 1. Record this binding as evidence-backed parameter substitution and ensure the ETR's buffer-address and AXI-control variables are defined before evaluating the CATU defaults. Stop if the connection is missing or ambiguous.
 
 ## Standard component-operation routing
 
@@ -68,7 +70,7 @@ Do not emit a call merely because an asset exists. A verified non-standard compo
 
 The XML assets are canonical semantic templates for both output formats. Their wrapper exists only to make each asset well-formed; never copy the wrapper. Resolve instance suffixes, component base addresses/APs, selected calls, and routing only from evidence. The output contract translates the selected child elements without maintaining parallel hand-edited YAML assets.
 
-A user-provided snippet, selected asset, or trace scaffold is the behaviorally fixed source template for its operations unless the deviation gate below is completed. Retain its comments, `__var` declarations, checks, controls, waits, cleanup, register-operation order, and sequence bodies. Without confirmed deviation, permitted adaptations are limited to evidence-backed parameter values, consistent instance suffixes and call names, placement in the scaffold, representation-preserving XML/YAML syntax, and these two approval-free access adaptations:
+A user-provided snippet, selected asset, or trace scaffold is the behaviorally fixed source template for its operations unless the deviation gate below is completed. Retain its comments, `__var` declarations, checks, controls, waits, cleanup, register-operation order, and sequence bodies. Without confirmed deviation, permitted adaptations are limited to evidence-backed parameter values, consistent instance suffixes and call names, scaffold assembly under the structure and lifecycle gates below, representation-preserving XML/YAML syntax, and these two approval-free access adaptations:
 
 - Switch required `__ap` usage consistently to `__apid`.
 - Use `ReadAccessAP`/`WriteAccessAP` when a component is placed in DP memory space.
@@ -79,15 +81,13 @@ Determine technical suitability before rendering. Apart from the two approval-fr
 
 After confirmation, apply only the displayed deviation; any additional functional change other than an applicable approval-free access adaptation requires a new deviation request and confirmation. Record approval-free and confirmed deviations with their evidence in `.agent-artifacts/<destination-stem>.trace-sequences.md` and render the complete XML or YAML proposal. PDSC application still requires its normal destination confirmation. For `cbuild-run`, follow `cbuild-run-output.md` and let its application skill own authorization, candidate lifecycle, original-file protection, validation, and integration boundaries; template-deviation confirmation remains a separate gate.
 
-In `.agent-artifacts/<destination-stem>.trace-sequences.md`, record a line-level merge checklist for each snippet or asset and identify the permitted adaptations, approval-free access adaptations, and every explicitly confirmed deviation. Compare rendered output against the source template after normalizing approved suffixes, parameter values, placement, representation syntax, approval-free access adaptations, and confirmed deviations; any other semantic difference fails the fidelity gate.
+In `.agent-artifacts/<destination-stem>.trace-sequences.md`, record a line-level merge checklist for each snippet or asset and identify the permitted adaptations, approval-free access adaptations, and every explicitly confirmed deviation. Compare rendered output against the source template, accounting for those adaptations and confirmed deviations; any other semantic difference fails the fidelity gate.
 
 ## Structure and lifecycle gates
 
-Start from `assets/scaffolds/full-trace.xml`. Preserve every required top-level sequence and applicable `DoTrace*_<mode>` helper, including its opening trace-mode variable block. Follow `references/legacy-to-full-migration.md` for legacy destinations. Do not flatten or inline helpers.
+Start from `assets/scaffolds/full-trace.xml` and follow `references/legacy-to-full-migration.md` for legacy destinations. The agent may remove empty implementations, including helpers containing only standard mode-variable declarations, as ordinary scaffold assembly. Keep retained calls valid and preserve required operations and lifecycle order for all selected paths. Do not flatten or inline helpers that perform work.
 
-Put each routing sequence's `__var` declarations before executable statements. `TraceStart`, `TraceCapture`, `DoTraceFlush`, `TraceFlush`, `TraceStop`, and their mode helpers begin with `swoTrace`, `syncTrace`, and `bufferTrace` derived from `__traceout`; component sequences declare only variables they use.
-
-When a scaffold sequence contains no C-like content after its standard mode variables, retain a representation-appropriate `No trace operation is required for this mode.` comment. A scaffold-only insertion marker may follow it; remove both when an operation is added.
+Put each routing sequence's `__var` declarations before executable statements. `TraceStart`, `TraceCapture`, `DoTraceFlush`, `TraceFlush`, `TraceStop`, and their mode helpers begin with `swoTrace`, `syncTrace`, and `bufferTrace` derived from `__traceout`. Component sequences may also retain these standard trace-mode declarations even when their current bodies do not use them; other local declarations should be used.
 
 Do not invent addresses, values, routes, timestamp settings, formatter settings, component order, or dormant-state requirements. Honor the trace record's dormant decision or obtain it from `$debug-access-knowledge` when required.
 
