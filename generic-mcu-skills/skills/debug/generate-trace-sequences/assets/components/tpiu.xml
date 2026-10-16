@@ -37,7 +37,7 @@
         </control>
         <control if="prescaler == 0">
           <block>
-            Message(2, "Error: TPIU trace clocks cannot produce a valid divisor (input %llu Hz, output %llu Hz)", __traceclockin, __traceclockout);
+            Message(2, "Error: TPIU trace clocks cannot produce a valid divisor (input %u Hz, output %u Hz)", __traceclockin, __traceclockout);
           </block>
         </control>
       </control>

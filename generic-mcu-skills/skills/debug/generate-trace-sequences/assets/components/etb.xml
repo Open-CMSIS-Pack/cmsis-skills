@@ -172,7 +172,7 @@
           // named buffers specified in PDSC. Decide which xxx_Read_Buffer sequence to call based
           // on TraceBufferSelected().
           bytesStreamed = BufferStreamOut(0, 0, bytesToRead, "", 1, 0);
-          Message(0, "Streamed %llu of %llu ETB trace bytes", bytesStreamed, bytesToRead);
+          Message(0, "Streamed %u of %u ETB trace bytes", bytesStreamed, bytesToRead);
         </block>
       </control>
       <control if="bytesToRead == 0">
