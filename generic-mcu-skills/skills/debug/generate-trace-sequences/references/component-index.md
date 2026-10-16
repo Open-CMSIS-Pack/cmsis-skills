@@ -12,5 +12,6 @@ Read this file first, then load only the selected component assets. Every path b
 | `assets/components/swo.xml` | a separately documented SWO component with its own base address is used | SWO base address, AP, clocks |
 | `assets/components/funnel.xml` | a trace funnel is on the selected path | base address, AP, input mask |
 | `assets/components/replicator.xml` | a replicator is on the selected path | base address, AP, output filters |
+| `assets/components/gts.xml` | a documented Global Timestamp Generator supplies trace timestamps | GTS base address, AP, counter frequency, and HDBG support and routing |
 
 Select `etr.xml` and `catu.xml` independently. Omit `catu.xml` unless the verified route implements CATU.

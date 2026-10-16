@@ -21,7 +21,7 @@
       __var LAR_KEY   = 0xC5ACCE55;
       __var savedAP = __ap;
 
-      Message(0, "Begin CS_TPIU___INSTANCE_INDEX_____INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
+      Message(0, "Begin CS_TPIU___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
 
       __ap = TPIU___INSTANCE_INDEX___AP;                                // Set AP
     </block>
@@ -45,7 +45,7 @@
     </control>
     <block>
       __ap = savedAP;
-      Message(0, "End CS_TPIU___INSTANCE_INDEX_____INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
+      Message(0, "End CS_TPIU___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 
@@ -56,7 +56,7 @@
       __var savedAP = __ap;
       __var ffcrValue = 0x00000000;
 
-      Message(0, "Begin CS_TPIU___INSTANCE_INDEX_____INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
+      Message(0, "Begin CS_TPIU___INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
 
       // Configure TPIU if needed and enable formatter
       __ap = TPIU___INSTANCE_INDEX___AP;                            // Set AP
@@ -64,7 +64,7 @@
       ffcrValue |= 0x00000002;                                      // Enable formatter
       Write32(TPIU___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);  // TPIU FFCR
       __ap = savedAP;
-      Message(0, "End CS_TPIU___INSTANCE_INDEX_____INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
+      Message(0, "End CS_TPIU___INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 
@@ -75,7 +75,7 @@
       __var ffcrValue   = 0x00000000;
       __var ffsrValue   = 0x00000000;
 
-      Message(0, "Begin CS_TPIU___INSTANCE_INDEX_____INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
+      Message(0, "Begin CS_TPIU___INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
 
       __ap = TPIU___INSTANCE_INDEX___AP;  // Set AP
     </block>
@@ -112,7 +112,7 @@
     </control>
     <block>
       __ap = savedAP;
-      Message(0, "End CS_TPIU___INSTANCE_INDEX_____INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
+      Message(0, "End CS_TPIU___INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", TPIU___INSTANCE_INDEX___ADDRESS, TPIU___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 </cmsis-pack-trace-snippet>

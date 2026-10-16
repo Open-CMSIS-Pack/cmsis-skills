@@ -13,7 +13,7 @@
       __var prescaler =    0;
       __var swoMode   =    2;                                      // Fixed SWO-UART for now
 
-      Message(0, "Begin CS_SWO___INSTANCE_INDEX_____INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", SWO___INSTANCE_INDEX___ADDRESS, SWO___INSTANCE_INDEX___AP);
+      Message(0, "Begin CS_SWO___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", SWO___INSTANCE_INDEX___ADDRESS, SWO___INSTANCE_INDEX___AP);
     </block>
     <control if="__traceclockout != 0">
       <control if="__traceclockin &lt; __traceclockout">
@@ -32,7 +32,7 @@
       Write32(SWO___INSTANCE_INDEX___ADDRESS + 0x010, prescaler);  // Prescaler
       Write32(SWO___INSTANCE_INDEX___ADDRESS + 0x0F0, swoMode);    // Enable SWO-UART
       __ap = savedAP;
-      Message(0, "End CS_SWO___INSTANCE_INDEX_____INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", SWO___INSTANCE_INDEX___ADDRESS, SWO___INSTANCE_INDEX___AP);
+      Message(0, "End CS_SWO___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", SWO___INSTANCE_INDEX___ADDRESS, SWO___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 </cmsis-pack-trace-snippet>

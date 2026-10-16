@@ -14,7 +14,7 @@
       __var ffcrValue = 0x00000000;
       __var etbStatus = 0x00000000;
 
-      Message(0, "Begin CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
+      Message(0, "Begin CS_ETB___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
       __ap = ETB___INSTANCE_INDEX___AP;                             // Set AP
 
       // Configure ETB
@@ -37,7 +37,7 @@
     </block>
     <block>
       __ap = savedAP;
-      Message(0, "End CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
+      Message(0, "End CS_ETB___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 
@@ -47,7 +47,7 @@
       __var ffcrValue = 0x00000000;
       __var savedAP = __ap;
 
-      Message(0, "Begin CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
+      Message(0, "Begin CS_ETB___INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
 
       __ap = ETB___INSTANCE_INDEX___AP;                             // Set AP
       ffcrValue  = Read32(ETB___INSTANCE_INDEX___ADDRESS + 0x304);
@@ -59,7 +59,7 @@
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x020, 0x00000001);  // Enable ETB
       __ap = savedAP;
 
-      Message(0, "End CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
+      Message(0, "End CS_ETB___INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 
@@ -70,7 +70,7 @@
       __var ffcrValue   = 0x00000000;
       __var etbStatus   = 0x00000000;
 
-      Message(0, "Begin CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
+      Message(0, "Begin CS_ETB___INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
 
       __ap = ETB___INSTANCE_INDEX___AP;  // Set AP
     </block>
@@ -111,7 +111,7 @@
     </control>
     <block>
       __ap = savedAP;
-      Message(0, "End CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
+      Message(0, "End CS_ETB___INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 
@@ -127,7 +127,7 @@
       __var bytesToRead   = 0x00000000;
       __var bytesStreamed = 0x00000000;
 
-      Message(0, "Begin CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Read_Buffer @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
+      Message(0, "Begin CS_ETB___INSTANCE_INDEX___Read_Buffer @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
 
       __ap = ETB___INSTANCE_INDEX___AP; // Set AP
 
@@ -166,7 +166,10 @@
         <block>
           // RRD reads 32-bit trace-RAM words and advances the ETB RRP register.
           BufferRead(0, 0, ETB___INSTANCE_INDEX___ADDRESS + 0x010, bytesToRead, 32);
-          bytesStreamed = BufferStreamOut(0, 0, bytesToRead, ".trace/TraceBufferOutput.TB.raw", 0, 0);
+          // Stream to single unnamed trace buffer in system by default, insert name if multiple
+          // named buffers specified in PDSC. Decide which xxx_Read_Buffer sequence to call based
+          // on TraceBufferSelected().
+          bytesStreamed = BufferStreamOut(0, 0, bytesToRead, "", 1, 0);
           Message(0, "Streamed %d of %d ETB trace bytes", bytesStreamed, bytesToRead);
         </block>
       </control>
@@ -178,7 +181,7 @@
     </control>
     <block>
       __ap = savedAP;
-      Message(0, "End CS_ETB___INSTANCE_INDEX_____INSTANCE_INDEX___Read_Buffer @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
+      Message(0, "End CS_ETB___INSTANCE_INDEX___Read_Buffer @0x%08X, AP 0x%08X", ETB___INSTANCE_INDEX___ADDRESS, ETB___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 </cmsis-pack-trace-snippet>
