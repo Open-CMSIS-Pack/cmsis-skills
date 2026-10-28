@@ -29,7 +29,9 @@
     <block>
       // Configure
       ffcrValue  = Read32(ETB___INSTANCE_INDEX___ADDRESS + 0x304);
-      ffcrValue |= 0x00000003;                                     // FFCR: Enable Formatter and Trigger Insertion
+      ffcrValue |= 0x00000003;                                      // FFCR: Enable Formatter and Trigger Insertion
+      ffcrValue |= 0x00000400;                                      // FFCR: Insert trigger marker on flush completion (TrigFl)
+      ffcrValue |= 0x00001020;                                      // Flush and Stop Formatter on Trigger (FOnTrig + StopFl), Note: Not supported on smaller TPIUs!
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x01C, ETB___INSTANCE_INDEX___TRIGGER_COUNT); // TRG: Number of words to capture after trigger
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x018, 0x00000000);  // Init RwP
@@ -54,6 +56,8 @@
       __ap = ETB___INSTANCE_INDEX___AP;                             // Set AP
       ffcrValue  = Read32(ETB___INSTANCE_INDEX___ADDRESS + 0x304);
       ffcrValue |= 0x00000003;                                      // FFCR: Enable Formatter and Trigger Insertion
+      ffcrValue |= 0x00000400;                                      // FFCR: Insert trigger marker on flush completion (TrigFl)
+      ffcrValue |= 0x00001020;                                      // Flush and Stop Formatter on Trigger (FOnTrig + StopFl), Note: Not supported on smaller TPIUs!
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x01C, ETB___INSTANCE_INDEX___TRIGGER_COUNT); // TRG: Number of words to capture after trigger
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x018, 0x00000000);  // Init RwP
@@ -79,7 +83,7 @@
     <block>
       // Flush ETB first
       ffcrValue = Read32(ETB___INSTANCE_INDEX___ADDRESS + 0x304);
-      ffcrValue &amp;= ~(0x00001040);    // Clear StopOnFlush and FlushOnManual
+      ffcrValue &amp;= ~(0x00001460);    // Clear FOnTrig, StopFl, FOnMan and TrigFl; do not insert a trigger packet on manual flush
       ffcrValue |= 0x00001000;           // Stop after the manual flush completes
       Write32(ETB___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
       ffcrValue |= 0x00000040;           // Trigger manual flush

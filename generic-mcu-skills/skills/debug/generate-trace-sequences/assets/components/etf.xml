@@ -31,7 +31,7 @@
       Write32(ETF___INSTANCE_INDEX___ADDRESS + 0x028, 0x00000002);  // Set HW FIFO Mode
       Write32(ETF___INSTANCE_INDEX___ADDRESS + 0x034, 0x00000000);  // Watermark: Set threshold vacancy to 0 to use full buffer
       ffcrValue  = Read32(ETF___INSTANCE_INDEX___ADDRESS + 0x304);
-      ffcrValue |= 0x00000003;                                     // FFCR: Enable Formatter and Trigger Insertion
+      ffcrValue |= 0x00000003;                                      // FFCR: Enable Formatter and Trigger Insertion
       Write32(ETF___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
       Write32(ETF___INSTANCE_INDEX___ADDRESS + 0x308, 0x00000000);  // Clear PSCR, use other components for periodic sync requests
 
@@ -68,6 +68,8 @@
       Write32(ETF___INSTANCE_INDEX___ADDRESS + 0x034, 0x00000000);          // Watermark: Set threshold vacancy to 0 to use full buffer
       ffcrValue  = Read32(ETF___INSTANCE_INDEX___ADDRESS + 0x304);
       ffcrValue |= 0x00000003;                                             // FFCR: Enable Formatter and Trigger Insertion
+      ffcrValue |= 0x00000400;                                             // FFCR: Insert trigger marker on flush completion (TrigFl)
+      ffcrValue |= 0x00001020;                                             // Flush and Stop Formatter on Trigger (FOnTrig + StopFl)
       Write32(ETF___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
       Write32(ETF___INSTANCE_INDEX___ADDRESS + 0x308, ETF___INSTANCE_INDEX___PSCR_CircularBuffer);  // Set PSCR
       Write32(ETF___INSTANCE_INDEX___ADDRESS + 0x018, 0x00000000);          // Init RwP
@@ -92,6 +94,8 @@
       __ap = ETF___INSTANCE_INDEX___AP;                                     // Set AP
       ffcrValue  = Read32(ETF___INSTANCE_INDEX___ADDRESS + 0x304);
       ffcrValue |= 0x00000003;                                              // FFCR: Enable Formatter and Trigger Insertion
+      ffcrValue |= 0x00000400;                                              // FFCR: Insert trigger marker on flush completion (TrigFl)
+      ffcrValue |= 0x00001020;                                              // Flush and Stop Formatter on Trigger (FOnTrig + StopFl)
       Write32(ETF___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
       Write32(ETF___INSTANCE_INDEX___ADDRESS + 0x308, ETF___INSTANCE_INDEX___PSCR_CircularBuffer);  // Set PSCR
       Write32(ETF___INSTANCE_INDEX___ADDRESS + 0x018, 0x00000000);          // Init RwP
@@ -117,7 +121,7 @@
     <block>
       // Flush the ETF formatter and stop capture.
       ffcrValue = Read32(ETF___INSTANCE_INDEX___ADDRESS + 0x304);
-      ffcrValue &amp;= ~(0x00001040);    // Clear StopOnFlush and FlushOnManual
+      ffcrValue &amp;= ~(0x00001460);    // Clear FOnTrig, StopFl, FOnMan and TrigFl; do not insert a trigger packet on manual flush
       ffcrValue |= 0x00001000;           // Stop after the manual flush completes
       Write32(ETF___INSTANCE_INDEX___ADDRESS + 0x304, ffcrValue);
       ffcrValue |= 0x00000040;           // Trigger manual flush
