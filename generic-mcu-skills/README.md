@@ -30,6 +30,15 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 | [`resolve-official-device-documentation`](skills/bring-up/resolve-official-device-documentation/SKILL.md) | Recover a traceable official vendor source for an unavailable device document. | |
 | [`trace-knowledge`](skills/bring-up/trace-knowledge/SKILL.md) | Build a documented, reviewable record of an SoC's CoreSight trace topology and operating requirements. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md` when trace evidence needs reusable access facts</li><li>Output: `.agent-artifacts/{pdsc-stem}.trace-knowledge.md`: verified trace paths, constraints, and readiness state</li></ul> |
 
+### Debug
+
+| Skill | Purpose | Artifacts |
+| --- | --- | --- |
+| [`manage-pdsc-debugvars`](skills/debug/manage-pdsc-debugvars/SKILL.md) | Design and safely integrate documented PDSC `debugvars` runtime choices. | |
+| [`generate-debug-description`](skills/debug/generate-debug-description/SKILL.md) | Add or review verified non-sequence CMSIS-Pack Debug Description definitions in an existing DFP PDSC. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md`</li></ul> |
+| [`generate-debug-sequences`](skills/debug/generate-debug-sequences/SKILL.md) | Add evidence-backed device-specific non-trace debug sequences to an existing DFP PDSC. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md`</li><li>Input: `.agent-artifacts/{pdsc-stem}.debug-knowledge.md`</li><li>Output: `.agent-artifacts/{pdsc-stem}.debug-sequences.md`: private proposal record containing proposed sequences, debugvars, evidence, and validation status</li></ul> |
+| [`generate-trace-sequences`](skills/debug/generate-trace-sequences/SKILL.md) | Add modular, evidence-backed CoreSight trace sequences to an existing DFP PDSC. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.trace-knowledge.md`</li><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md` when required by the trace record</li><li>Output: `.agent-artifacts/{pdsc-stem}.trace-sequences.md`: private proposal record containing proposed sequences, debugvars, evidence, and validation status</li></ul> |
+
 ### Ethos-U
 
 | Skill | Purpose | Artifacts |
@@ -47,12 +56,8 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 | Skill | Purpose | Artifacts |
 | --- | --- | --- |
 | [`prepare-pdsc-sequence-change`](skills/pack/prepare-pdsc-sequence-change/SKILL.md) | Scope and prepare a debug or trace PDSC sequence change for domain assembly. | |
-| [`manage-pdsc-debugvars`](skills/pack/manage-pdsc-debugvars/SKILL.md) | Design and safely integrate documented PDSC `debugvars` runtime choices. | |
 | [`validate-pdsc-sequence-xml`](skills/pack/validate-pdsc-sequence-xml/SKILL.md) | Validate shared PDSC sequence XML and C-like block formatting. | |
 | [`apply-confirmed-pdsc-proposal`](skills/pack/apply-confirmed-pdsc-proposal/SKILL.md) | Apply and validate an explicitly confirmed PDSC sequence or `debugvars` proposal. | |
-| [`generate-debug-description`](skills/pack/generate-debug-description/SKILL.md) | Add or review verified non-sequence CMSIS-Pack Debug Description definitions in an existing DFP PDSC. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md`</li></ul> |
-| [`generate-debug-sequences`](skills/pack/generate-debug-sequences/SKILL.md) | Add evidence-backed device-specific non-trace debug sequences to an existing DFP PDSC. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md`</li><li>Input: `.agent-artifacts/{pdsc-stem}.debug-knowledge.md`</li><li>Output: `.agent-artifacts/{pdsc-stem}.debug-sequences.md`: private proposal record containing proposed sequences, debugvars, evidence, and validation status</li></ul> |
-| [`generate-trace-sequences`](skills/pack/generate-trace-sequences/SKILL.md) | Add modular, evidence-backed CoreSight trace sequences to an existing DFP PDSC. | <ul><li>Input: `.agent-artifacts/{pdsc-stem}.trace-knowledge.md`</li><li>Input: `.agent-artifacts/{pdsc-stem}.debug-access-knowledge.md` when required by the trace record</li><li>Output: `.agent-artifacts/{pdsc-stem}.trace-sequences.md`: private proposal record containing proposed sequences, debugvars, evidence, and validation status</li></ul> |
 
 ## CMSIS foundation
 
