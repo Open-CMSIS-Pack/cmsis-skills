@@ -1,0 +1,4 @@
+interface:
+  display_name: "µVision to Csolution"
+  short_description: "Convert and validate µVision workspaces"
+  default_prompt: "Use $uv2csolution-converter to convert this µVision project or workspace to CMSIS Csolution format and validate the result."
