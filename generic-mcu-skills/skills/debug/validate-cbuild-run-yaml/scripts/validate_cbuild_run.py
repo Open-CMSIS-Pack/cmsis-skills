@@ -202,6 +202,8 @@ def validate_datapatches(value: Any, location: str, errors: list[str]) -> None:
         if "mask" in patch and not is_integer(patch["mask"]):
             errors.append(f"{item_location}.mask: expected an integer")
         require_string(patch, "type", item_location, errors)
+        if "type" in patch and patch["type"] not in ("AP", "Mem"):
+            errors.append(f"{item_location}.type: expected 'AP' or 'Mem'")
         require_string(patch, "info", item_location, errors)
 
 
