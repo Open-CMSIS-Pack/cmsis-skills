@@ -207,11 +207,12 @@ def validate_datapatches(value: Any, location: str, errors: list[str]) -> None:
         require_string(patch, "info", item_location, errors)
 
 
-def validate_accessports(value: Any, location: str, errors: list[str]) -> None:
+def validate_accessports(
+    value: Any, location: str, errors: list[str], apids: set[int]
+) -> None:
     accessports = require_list(value, location, errors)
     if accessports is None:
         return
-    apids: set[int] = set()
     for index, item in enumerate(accessports):
         item_location = f"{location}[{index}]"
         accessport = require_mapping(item, item_location, errors)
@@ -233,7 +234,9 @@ def validate_accessports(value: Any, location: str, errors: list[str]) -> None:
         if "datapatch" in accessport:
             validate_datapatches(accessport["datapatch"], f"{item_location}.datapatch", errors)
         if "accessports" in accessport:
-            validate_accessports(accessport["accessports"], f"{item_location}.accessports", errors)
+            validate_accessports(
+                accessport["accessports"], f"{item_location}.accessports", errors, apids
+            )
 
 
 def validate_debugports(value: Any, errors: list[str]) -> None:
@@ -242,6 +245,7 @@ def validate_debugports(value: Any, errors: list[str]) -> None:
     if debugports is None:
         return
     dpids: set[int] = set()
+    apids: set[int] = set()
     for index, item in enumerate(debugports):
         item_location = f"{location}[{index}]"
         debugport = require_mapping(item, item_location, errors)
@@ -268,7 +272,9 @@ def validate_debugports(value: Any, errors: list[str]) -> None:
                 if "targetsel" in swd and not is_integer(swd["targetsel"]):
                     errors.append(f"{item_location}.swd.targetsel: expected an integer")
         if "accessports" in debugport:
-            validate_accessports(debugport["accessports"], f"{item_location}.accessports", errors)
+            validate_accessports(
+                debugport["accessports"], f"{item_location}.accessports", errors, apids
+            )
 
 
 def validate_processors(value: Any, errors: list[str]) -> None:
