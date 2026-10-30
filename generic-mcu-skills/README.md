@@ -13,10 +13,11 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 | [`add-cmsis-target`](skills/project/add-cmsis-target/SKILL.md) | Add a verified board or device target and offer compatible packaged board layers. | |
 | [`check-cmsis-environment`](skills/project/check-cmsis-environment/SKILL.md) | Verify the exported CMSIS tools environment, CMSIS-Toolbox, CMake, Ninja, and available compiler toolchains. | |
 | [`check-zephyr-environment`](skills/project/check-zephyr-environment/SKILL.md) | Verify a Zephyr workspace, its Python virtual environment, and venv-local west installation. | |
+| [`configure-cmsis-gitignore`](skills/project/configure-cmsis-gitignore/SKILL.md) | Configure shared ignore policy during solution authoring or repository setup, using verified outputs and preserving project inputs and drop-ins. | <ul><li>Output: solution-local `.gitignore`</li></ul> |
 | [`identify-cmsis-board-layer`](skills/project/identify-cmsis-board-layer/SKILL.md) | Identify packaged board layers compatible with a CMSIS target and its connections. | |
 | [`identify-cmsis-board-support`](skills/project/identify-cmsis-board-support/SKILL.md) | Identify a CMSIS BSP for a board or a DFP for its fitted device. | |
 | [`identify-zephyr-board`](skills/project/identify-zephyr-board/SKILL.md) | Resolve a physical board to its exact Zephyr board target and fitted MCU or SoC. | |
-| [`start-zephyr-project`](skills/project/start-zephyr-project/SKILL.md) | Create an initial west-integrated CMSIS solution for a Zephyr-supported board. | |
+| [`start-zephyr-project`](skills/project/start-zephyr-project/SKILL.md) | Create an initial west-integrated CMSIS solution and validated ignore rules for a Zephyr-supported board. | <ul><li>Output: solution-local `.gitignore` via `configure-cmsis-gitignore`</li></ul> |
 
 ### Bring-up
 
@@ -82,6 +83,8 @@ For example, a trace enablement workflow for a new device can consist of separat
 4. Integrate the verified trace configuration into a Device Family Pack (DFP).
 
 This separation makes failures easier to diagnose and enables subsequent skills to reuse verified outputs.
+
+Higher-level CMSIS project and solution authoring workflows should invoke [configure-cmsis-gitignore](skills/project/configure-cmsis-gitignore/SKILL.md) after creating a solution or introducing or changing disposable output paths during conversion, target integration, or layer integration. Pass the selected solution and verified configuration or available build metadata; accept a no-op when existing rules suffice. Keep ignore validation distinct from project validation. Read-only discovery and environment checks do not configure repository policy.
 
 ## Top-level directory structure
 
