@@ -16,7 +16,7 @@ Translate the selected canonical XML asset and scaffold children as follows:
 
 Preserve the C-like semantics during translation. Use the destination's established entity convention; otherwise render raw C-like operators because YAML does not require XML escaping. Never combine `execute` with nested `blocks`, or `atomic` with nested `blocks`. Merge sequences by `(name, pname)` and variables by name. Preserve unrelated sequences, variables, topology, debugger settings, images, programming data, comments, literal scalar style, numeric spelling, and root-node order.
 
-Ensure `debug-topology.trace-sinks` already identifies every selected physical sink, or include exact evidence-backed additions in the same confirmed trace proposal. Merge trace-sink entries by their format-defined identity and never infer topology from selected sequence assets alone.
+Ensure `debug-topology.trace-sinks` contains the documented `serialwire` and `tracebuffer` capabilities required by the selected paths, or include exact evidence-backed additions in the same confirmed trace proposal. The format has no synchronous trace-port sink entry; validate synchronous output against the verified topology and sequence configuration without inventing one. Merge supported entries by their format-defined identity and never infer topology from selected sequence assets alone.
 
 For legacy or omitted `debug-sequences-conf.trace-setup`, follow the migration contract before setting `trace-setup: full`. Render the common extension markers as raw YAML comments without changing their text.
 
