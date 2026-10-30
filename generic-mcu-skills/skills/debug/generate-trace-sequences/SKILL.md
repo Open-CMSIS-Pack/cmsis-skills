@@ -1,0 +1,41 @@
+---
+name: generate-trace-sequences
+description: Generate modular, evidence-backed CoreSight trace sequences in either an existing CMSIS Device Family Pack PDSC or one existing CMSIS-Toolbox `*.cbuild-run.yml` target. Use after `$trace-knowledge` produces a READY record, when assembling component templates into TraceStart, TraceCapture, TraceFlush, and TraceStop or maintaining device-specific extension regions; use destination-specific preparation, application, and validation, and consult `$debug-access-knowledge` only for a required access fact absent from the trace record.
+---
+
+# Generate Trace Sequences
+
+## Target & Persona
+
+- **Role:** CMSIS-Pack Tool Integrator and Verification Engineer.
+- **Objective:** Generate complete, evidence-backed full-mode CoreSight trace setup for every selected available path in one PDSC or `cbuild-run` destination.
+
+## Prerequisites & Context
+
+- **Expected input:** Exactly one existing target `.pdsc` or `*.cbuild-run.yml`, selected PDSC scope or flattened runtime target, a READY `.agent-artifacts/<pdsc-stem>.trace-knowledge.md` record, and documentation for the selected topology. Use `.agent-artifacts/<pdsc-stem>.debug-access-knowledge.md` only for a required processor, connection, DP/AP path, protocol, or dormant-state fact absent from the trace record.
+- **Dependencies:** `$trace-knowledge`; `$debug-access-knowledge` when required; `$manage-debug-variables`; for PDSC output, `$prepare-pdsc-sequence-change`, `$apply-confirmed-pdsc-proposal`, and `$validate-pdsc-sequence-xml`; for `cbuild-run` output, `$prepare-cbuild-run-change`, `$apply-confirmed-cbuild-run-proposal`, and `$validate-cbuild-run-yaml`; current [Open-CMSIS-Pack *Debug Description* specification](https://open-cmsis-pack.github.io/Open-CMSIS-Pack-Spec/main/html/debug_description.html); current [CMSIS-Toolbox *Build Information Files* specification](https://github.com/Open-CMSIS-Pack/cmsis-toolbox/blob/main/docs/YML-CBuild-Format.md#cbuild-runyml); `references/trace-sequence-contract.md`; `references/component-index.md`; selected component assets; `assets/scaffolds/full-trace.xml`; the selected output contract; and `references/legacy-to-full-migration.md` when migrating legacy setup.
+- **Portability:** Support any existing DFP or `cbuild-run` target with documented CoreSight paths. A `cbuild-run` change may be an end-user override or a reviewable proving step before a separate Pack update. Do not assume a device family, debug adapter, toolchain, RTOS, active target, or trace transport.
+
+## Execution Steps (Strict Workflow)
+
+1. **Analysis:** Identify exactly one destination, read the READY trace record, and run the matching preparation skill with `domain=trace`. Verify every selected path, component instance, address, DP/AP path, destination applicability, and explicit non-sequence debug definition. Check every user-provided trace snippet and selected canonical component asset against that evidence and the required lifecycle before assembly. If a template is technically unsuitable without substantive changes beyond the two approval-free access adaptations in the common trace contract, present the problem, affected original region, evidence, exact proposed change, and semantic impact, then stop for explicit confirmation to deviate. Return missing trace facts to `$trace-knowledge`; consult `$debug-access-knowledge` only for a needed reusable access fact absent from the trace record.
+2. **Processing:** Read `references/trace-sequence-contract.md` and `references/component-index.md`, select only required canonical XML component assets, and assemble the destination-neutral sequence tree from `assets/scaffolds/full-trace.xml`. Follow `references/legacy-to-full-migration.md` when the destination uses legacy setup. Follow the common contract's asset-fidelity, scaffold, and variable-management rules. Add verified-purpose comments only to newly authored device-specific command groups while preserving snippet and template comments. Render through exactly one of `references/pdsc-output.md` or `references/cbuild-run-output.md` without maintaining parallel hand-edited component assets.
+3. **Validation:** Create or update `.agent-artifacts/<destination-stem>.trace-sequences.md` as the private proposal record. Record destination and path, target identity or scope, trace paths, component instances, semantic sequence tree, variables, exact XML or YAML, extension regions, selected assets, evidence, approval-free and confirmed template deviations, `.dbgconf` proposals, regeneration risk, unresolved items, and `PROPOSED` status. For PDSC, present the complete rendered proposal, obtain destination confirmation, and apply through its application skill. For `cbuild-run`, select and record the exact sibling path and delegate proposal writing, authorization handling, original-file protection, and common validation to `$apply-confirmed-cbuild-run-proposal`, then present the exact YAML, path, and results. Any required template-deviation confirmation remains separate. Complete the common trace scaffold, routing, asset-fidelity, marker, and lifecycle gates. Set `APPLIED` for PDSC or `CANDIDATE_WRITTEN` for `cbuild-run` only after all checks pass.
+4. **Formatting:** Report destination, trace paths, component instances, sequence identities, placement or merge result, extension regions, sources, `.dbgconf` proposals, regeneration risk when applicable, unresolved items, and validation results. Do not provide the private proposal record as input to a helper or another skill.
+
+## Guardrails & Constraints (Strict Rules)
+
+- **No fabrication:** Do not invent addresses, values, routes, component order, trace-clock behavior, trace mode, timestamps, formatter settings, dormant-state requirements, output mappings, or YAML fields.
+- **Portability:** Do not introduce a device-family, debugger, toolchain, build-system, RTOS, runtime-target, or trace-transport dependency unless authoritative inputs require it.
+- **Template deviation authorization:** Ask for explicit approval before every functional deviation from a user-provided snippet, canonical component asset, or trace scaffold. The only deviations that do not require approval are switching required `__ap` usage to `__apid` and using `ReadAccessAP`/`WriteAccessAP` when a component is placed in DP memory space. For every other deviation, present the exact conflict, affected original region, supporting evidence, exact replacement or diff, and semantic impact. Confirmation is valid only when the user gives it after those details are visible and explicitly authorizes the deviation; the initial request and general destination approval do not count. Apply only the confirmed deviation. PDSC application then requires its separate destination confirmation; route `cbuild-run` destination writing through its application skill.
+- **Critical blockers:** Stop when the trace record is not READY or is insufficient, required access evidence is absent, a required template deviation is unconfirmed or differs from the displayed change, the destination is missing or ambiguous, target identity conflicts, required assets or documentation are missing, required PDSC destination confirmation is absent, or validation fails.
+- **Scope:** Generate only full-mode CoreSight trace runtime configuration. Preserve unrelated destination content; do not create legacy setup, omit verified paths, or modify `.dbgconf` without explicit confirmation.
+- **Tone and style:** Respond factually and directly. Omit conversational filler.
+
+## Expected Output
+
+Create or update the private `.agent-artifacts/<destination-stem>.trace-sequences.md` proposal record, apply the confirmed full-mode trace change to one PDSC candidate or return the validated `cbuild-run` sibling produced by its application skill, and report common trace plus destination-specific validation.
+
+## Validation Resources
+
+Read [the common trace contract](references/trace-sequence-contract.md), [component index](references/component-index.md), and exactly one of [the PDSC output contract](references/pdsc-output.md) or [the cbuild-run output contract](references/cbuild-run-output.md). Run the selected common validator and all common scaffold, routing, asset-fidelity, marker, and lifecycle checks.

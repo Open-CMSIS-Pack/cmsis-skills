@@ -1,0 +1,4 @@
+interface:
+  display_name: "CMSIS: Validate CBuild Run YAML"
+  short_description: "Validate cbuild-run YAML debug configuration"
+  default_prompt: "Use $validate-cbuild-run-yaml to validate this cbuild-run debug configuration."
