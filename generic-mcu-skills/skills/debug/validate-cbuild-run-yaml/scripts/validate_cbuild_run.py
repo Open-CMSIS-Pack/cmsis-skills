@@ -110,7 +110,7 @@ def validate_block(value: Any, location: str, errors: list[str]) -> None:
         errors.append(f"{location}: 'execute' and nested 'blocks' are mutually exclusive")
     if "atomic" in block and "blocks" in block:
         errors.append(f"{location}: 'atomic' cannot be combined with nested 'blocks'")
-    if "atomic" in block and block["atomic"] not in (None, True, False):
+    if "atomic" in block and block["atomic"] is not None and not isinstance(block["atomic"], bool):
         errors.append(f"{location}.atomic: expected null or a boolean")
     if "timeout" in block:
         if not is_integer(block["timeout"]):
@@ -180,7 +180,7 @@ def validate_sequence_config(root: dict[str, Any], errors: list[str]) -> None:
     if config is None:
         return
     reject_unknown_keys(config, {"trace-setup"}, location, errors)
-    if "trace-setup" in config and config["trace-setup"] not in {"full", "legacy"}:
+    if "trace-setup" in config and config["trace-setup"] not in ("full", "legacy"):
         errors.append(f"{location}.trace-setup: expected 'full' or 'legacy'")
 
 
@@ -317,6 +317,15 @@ def validate_trace_sinks(value: Any, errors: list[str]) -> None:
     sinks = require_list(value, location, errors)
     if sinks is None:
         return
+    trace_buffers = [
+        item["tracebuffer"]
+        for item in sinks
+        if isinstance(item, dict) and "tracebuffer" in item
+    ]
+    if len(trace_buffers) > 1 and any(
+        not isinstance(name, str) or not name.strip() for name in trace_buffers
+    ):
+        errors.append(f"{location}: multiple trace buffers require a non-empty name for every buffer")
     identities: set[tuple[str, str | None]] = set()
     for index, item in enumerate(sinks):
         item_location = f"{location}[{index}]"
