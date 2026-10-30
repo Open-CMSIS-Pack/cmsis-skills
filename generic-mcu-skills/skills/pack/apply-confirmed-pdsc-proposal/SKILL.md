@@ -1,6 +1,6 @@
 ---
 name: apply-confirmed-pdsc-proposal
-description: Apply a complete, explicitly confirmed CMSIS-Pack PDSC sequence or `debugvars` proposal provided through the active conversation and run its required validation. Use after a debug or trace proposal has been reviewed and the user has authorized edits to the named PDSC files; do not create agent-artifact records, infer missing technical behavior, or apply changes before confirmation.
+description: Apply a complete, explicitly confirmed CMSIS-Pack PDSC debug-description, sequence, or `debugvars` proposal provided through the active conversation and run its required validation. Use after a debug or trace proposal has been reviewed and the user has authorized edits to the named PDSC files; do not create agent-artifact records, infer missing technical behavior, or apply changes before confirmation.
 ---
 
 # Apply Confirmed PDSC Proposal
@@ -12,7 +12,7 @@ description: Apply a complete, explicitly confirmed CMSIS-Pack PDSC sequence or 
 
 ## Prerequisites & Context
 
-- **Expected input:** Complete debug or trace proposal in conversation with exact XML and target paths, explicit confirmation for every user-owned file, and a named common plus domain-specific validation plan.
+- **Expected input:** Complete non-sequence debug-description, debug-sequence, trace-sequence, or `debugvars` proposal in conversation with exact XML and target paths, explicit confirmation for every user-owned file, and a named common plus domain-specific validation plan.
 - **Dependencies:** `$validate-pdsc-sequence-xml` and the calling domain skill's validation gates.
 - **Portability:** Support any existing CMSIS Device Family Pack. Do not assume a device family, debugger, toolchain, or active target.
 
@@ -20,7 +20,7 @@ description: Apply a complete, explicitly confirmed CMSIS-Pack PDSC sequence or 
 
 1. **Analysis:** Re-read target files and check that the confirmed proposal still applies. Report meaningful drift and obtain a refreshed proposal rather than applying stale XML.
 2. **Processing:** Apply the complete approved change in focused patches. Preserve unrelated PDSC and `.dbgconf` content; edit `.dbgconf` only when that file is explicitly confirmed.
-3. **Validation:** Run `$validate-pdsc-sequence-xml`, then the calling skill's domain-specific checks. Resolve validation failures before completion.
+3. **Validation:** Run `$validate-pdsc-sequence-xml`, recording when a non-sequence-only change adds no C-like block content, then run the calling skill's domain-specific checks. Resolve validation failures before completion.
 4. **Formatting:** Return applied files, validation results, domain-specific results, and any explicitly deferred user-owned file in conversation.
 
 ## Guardrails & Constraints (Strict Rules)
