@@ -55,6 +55,7 @@ Call a component operation only from the helper for its active mode:
 | `Capture` | `DoTraceCapture_<mode>` | Active path only |
 | `Flush` | `DoTraceFlush_<mode>` | Active path only; never call top-level `TraceFlush` from a helper |
 | `ReadBuffer` | `DoTraceRead_Buffer` after `DoTraceFlush` | Trace-buffer path only |
+| `Stop` | `DoTraceStop_Buffer` | CATU on an ETR buffer route, after ETR flush and any requested readback |
 
 For start and capture, call operations in route order: funnels, other glue such as ETF hardware-FIFO mode, then the sink or output component.
 
@@ -63,6 +64,18 @@ For start and capture, call operations in route order: funnels, other glue such 
 | SWO | Funnels, then a standalone SWO component or Cortex-M TPIU in SWO mode. |
 | Sync | Funnels, applicable glue, then the synchronous TPIU trace port. |
 | Trace buffer | Funnels, applicable glue, then the verified ETB, circular-buffer ETF, ETR, or other buffer sink. |
+
+For an ETR buffer accessed through CATU, use the following call order. `<c>` identifies the CATU instance and `<e>` its connected ETR.
+
+| Scaffold helper | Required CATU/ETR call order |
+| --- | --- |
+| `DoTraceStart_Buffer` | `CS_CATU_<c>_Configure`, then `CS_ETR_<e>_Configure_CircularBuffer` |
+| `DoTraceCapture_Buffer` | `CS_CATU_<c>_Capture`, then `CS_ETR_<e>_Capture_CircularBuffer` |
+| `DoTraceFlush_Buffer` | `CS_ETR_<e>_Flush`, then `CS_CATU_<c>_Flush` |
+| `DoTraceRead_Buffer` | `CS_ETR_<e>_Read_CircularBuffer`, with CATU still enabled |
+| `DoTraceStop_Buffer` | `CS_CATU_<c>_Stop`, after ETR flush and any requested readback |
+
+Configure CATU only while ETR is disabled and ready; complete ETR Flush before reconfiguration. CATU must remain enabled for ETR `RRD` readback, including pass-through mode. ETR Flush already disables ETR, so no separate ETR Stop helper is needed.
 
 Do not emit a call merely because an asset exists. A verified non-standard component role may be called from the applicable device-specific region; exclude it from the standard helper path so it is not operated twice.
 

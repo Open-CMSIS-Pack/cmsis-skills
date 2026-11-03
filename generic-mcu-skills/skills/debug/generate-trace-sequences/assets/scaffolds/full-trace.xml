@@ -141,6 +141,7 @@
         __var bufferTrace = __traceout &amp; 0x4;
       </block>
       <!-- CMSIS-PACK-TRACE: INSERT-CORESIGHT-SNIPPET-CALLS-HERE -->
+      <!-- For CATU/ETR: CATU Configure, then ETR Configure_CircularBuffer; ETR must initially be disabled and ready. -->
     </sequence>
     <sequence name="DoTraceCapture_SWO">
       <block>
@@ -165,6 +166,7 @@
         __var bufferTrace = __traceout &amp; 0x4;
       </block>
       <!-- CMSIS-PACK-TRACE: INSERT-CORESIGHT-SNIPPET-CALLS-HERE -->
+      <!-- For CATU/ETR: CATU Capture, then ETR Capture_CircularBuffer; DoTraceFlush has already completed. -->
     </sequence>
     <sequence name="DoTraceFlush_SWO">
       <block>
@@ -191,6 +193,7 @@
       </block>
       <!-- CMSIS-PACK-TRACE: INSERT-CORESIGHT-SNIPPET-CALLS-HERE -->
       <!-- Actual component flush calls only. Do not read a trace buffer here. -->
+      <!-- For CATU/ETR: ETR Flush, then CATU Flush; CATU Flush must leave CATU enabled. -->
     </sequence>
     <sequence name="DoTraceRead_Buffer">
       <block>
@@ -199,6 +202,7 @@
         __var bufferTrace = __traceout &amp; 0x4;
       </block>
       <!-- CMSIS-PACK-TRACE: INSERT-CORESIGHT-SNIPPET-CALLS-HERE -->
+      <!-- For CATU/ETR: ETR Read_CircularBuffer; keep CATU enabled throughout ETR.RRD readback. -->
     </sequence>
     <sequence name="DoTraceStop_SWO">
       <block>
@@ -223,6 +227,7 @@
         __var bufferTrace = __traceout &amp; 0x4;
       </block>
       <!-- CMSIS-PACK-TRACE: INSERT-CORESIGHT-SNIPPET-CALLS-HERE -->
+      <!-- For CATU/ETR: CATU Stop, after ETR flush and any requested readback have completed. -->
     </sequence>
   </sequences>
 </cmsis-pack-trace-scaffold>

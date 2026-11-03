@@ -70,7 +70,7 @@
       __ap = CATU___INSTANCE_INDEX___AP; // Set AP
 
       // Keep initial values and re-enable CATU before next capture.
-      // Clears any remaining error bits.
+      // In Translate mode, error bits clear only on a disabled-to-enabled transition.
       Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x000, 0x00000001);
 
       status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
@@ -86,7 +86,7 @@
     </block>
   </sequence>
 
-  <sequence name="CS_CATU___INSTANCE_INDEX___Flush" info="Flush any outstanding memory transactions">
+  <sequence name="CS_CATU___INSTANCE_INDEX___Flush" info="Drain outstanding memory transactions and re-enable CATU">
     <block>
       // Helper variables
       __var savedAP = __ap;
@@ -95,7 +95,8 @@
       Message(0, "Begin CS_CATU___INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
       __ap = CATU___INSTANCE_INDEX___AP; // Set AP
 
-      // Disable CATU before configuration
+      // ETR must have completed its flush before CATU is disabled.
+      // Disable CATU to drain outstanding memory transactions.
       Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x000, 0x00000000);
 
       status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
@@ -106,8 +107,42 @@
       </block>
     </control>
     <block>
+      // Keep the memory path available for ETR.RRD readback and the next capture.
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x000, 0x00000001);
+      status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
+    </block>
+    <control while="(status &amp; 0x0100) != 0" info="Wait for READY cleared" timeout="100">
+      <block>
+        status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
+      </block>
+    </control>
+    <block>
       __ap = savedAP;
       Message(0, "End CS_CATU___INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
+    </block>
+  </sequence>
+
+  <sequence name="CS_CATU___INSTANCE_INDEX___Stop" info="Drain outstanding memory transactions and leave CATU disabled">
+    <block>
+      // Helper variables
+      __var savedAP = __ap;
+      __var status = 0x00000000;
+
+      Message(0, "Begin CS_CATU___INSTANCE_INDEX___Stop @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
+      __ap = CATU___INSTANCE_INDEX___AP; // Set AP
+
+      // ETR must have completed its flush and any requested readback before CATU is disabled.
+      Write32(CATU___INSTANCE_INDEX___ADDRESS + 0x000, 0x00000000);
+      status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
+    </block>
+    <control while="(status &amp; 0x0100) == 0" info="Wait for READY" timeout="100">
+      <block>
+        status = Read32(CATU___INSTANCE_INDEX___ADDRESS + 0x100);
+      </block>
+    </control>
+    <block>
+      __ap = savedAP;
+      Message(0, "End CS_CATU___INSTANCE_INDEX___Stop @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 
