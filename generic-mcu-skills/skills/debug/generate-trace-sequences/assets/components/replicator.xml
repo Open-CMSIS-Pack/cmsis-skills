@@ -13,15 +13,12 @@
       // Helper variables
       __var savedAP    = __ap;
 
-      Message(0, "Begin CS_REPLICATOR___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", REPLICATOR___INSTANCE_INDEX___ADDRESS, REPLICATOR___INSTANCE_INDEX___AP);
-
       __ap = REPLICATOR___INSTANCE_INDEX___AP; // Set AP
 
       Write32(REPLICATOR___INSTANCE_INDEX___ADDRESS + 0x000, REPLICATOR___INSTANCE_INDEX___ID_FILTER0);
       Write32(REPLICATOR___INSTANCE_INDEX___ADDRESS + 0x004, REPLICATOR___INSTANCE_INDEX___ID_FILTER1);
 
       __ap = savedAP;
-      Message(0, "End CS_REPLICATOR___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", REPLICATOR___INSTANCE_INDEX___ADDRESS, REPLICATOR___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 </cmsis-pack-trace-snippet>

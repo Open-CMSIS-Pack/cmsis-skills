@@ -27,7 +27,6 @@
       __var ffcrValue = 0x00000000;
       __var etrStatus = 0x00000000;
 
-      Message(0, "Begin CS_ETR___INSTANCE_INDEX___Configure_CircularBuffer @0x%08X, AP 0x%08X", ETR___INSTANCE_INDEX___ADDRESS, ETR___INSTANCE_INDEX___AP);
       __ap = ETR___INSTANCE_INDEX___AP;                                                           // Set AP
 
       // Configure ETR for circular-buffer trace capture.
@@ -64,7 +63,6 @@
     </block>
     <block>
       __ap = savedAP;
-      Message(0, "End CS_ETR___INSTANCE_INDEX___Configure_CircularBuffer @0x%08X, AP 0x%08X", ETR___INSTANCE_INDEX___ADDRESS, ETR___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 
@@ -73,8 +71,6 @@
       // Helper variables
       __var ffcrValue = 0x00000000;
       __var savedAP = __ap;
-
-      Message(0, "Begin CS_ETR___INSTANCE_INDEX___Capture_CircularBuffer @0x%08X, AP 0x%08X", ETR___INSTANCE_INDEX___ADDRESS, ETR___INSTANCE_INDEX___AP);
 
       __ap = ETR___INSTANCE_INDEX___AP;                                                           // Set AP
       ffcrValue  = Read32(ETR___INSTANCE_INDEX___ADDRESS + 0x304);
@@ -97,7 +93,6 @@
       Write32(ETR___INSTANCE_INDEX___ADDRESS + 0x020, 0x00000001);                                // Enable ETR
       __ap = savedAP;
 
-      Message(0, "End CS_ETR___INSTANCE_INDEX___Capture_CircularBuffer @0x%08X, AP 0x%08X", ETR___INSTANCE_INDEX___ADDRESS, ETR___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 
@@ -107,8 +102,6 @@
       __var savedAP     = __ap;
       __var ffcrValue   = 0x00000000;
       __var etrStatus   = 0x00000000;
-
-      Message(0, "Begin CS_ETR___INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", ETR___INSTANCE_INDEX___ADDRESS, ETR___INSTANCE_INDEX___AP);
 
       __ap = ETR___INSTANCE_INDEX___AP;  // Set AP
     </block>
@@ -154,7 +147,6 @@
     </control>
     <block>
       __ap = savedAP;
-      Message(0, "End CS_ETR___INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", ETR___INSTANCE_INDEX___ADDRESS, ETR___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 
@@ -169,7 +161,6 @@
       __var bytesToRead   = 0x00000000;
       __var bytesStreamed = 0x00000000;
 
-      Message(0, "Begin CS_ETR___INSTANCE_INDEX___Read_CircularBuffer @0x%08X, AP 0x%08X", ETR___INSTANCE_INDEX___ADDRESS, ETR___INSTANCE_INDEX___AP);
       __ap = ETR___INSTANCE_INDEX___AP; // Set AP
 
       // ETR RSZ is expressed in 32-bit words. RRP and RWP identify the valid capture range.
@@ -201,7 +192,6 @@
           // named buffers specified in PDSC. Decide which xxx_Read_Buffer sequence to call based
           // on TraceBufferSelected().
           bytesStreamed = BufferStreamOut(0, 0, bytesToRead, "", 1, 0);
-          Message(0, "Streamed %u of %u ETR trace bytes", bytesStreamed, bytesToRead);
         </block>
       </control>
       <control if="bytesToRead == 0">
@@ -212,7 +202,6 @@
     </control>
     <block>
       __ap = savedAP;
-      Message(0, "End CS_ETR___INSTANCE_INDEX___Read_CircularBuffer @0x%08X, AP 0x%08X", ETR___INSTANCE_INDEX___ADDRESS, ETR___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 </cmsis-pack-trace-snippet>

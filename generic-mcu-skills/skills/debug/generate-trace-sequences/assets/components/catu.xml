@@ -20,8 +20,6 @@
       __var savedAP = __ap;
       __var status = 0x00000000;
 
-      Message(0, "Begin CS_CATU___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
-
       __ap = CATU___INSTANCE_INDEX___AP;                                                              // Set AP
 
       // Disable CATU before configuration
@@ -55,7 +53,6 @@
     </control>
     <block>
       __ap = savedAP;
-      Message(0, "End CS_CATU___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 
@@ -64,8 +61,6 @@
       // Helper variables
       __var savedAP = __ap;
       __var status = 0x00000000;
-
-      Message(0, "Begin CS_CATU___INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
 
       __ap = CATU___INSTANCE_INDEX___AP; // Set AP
 
@@ -82,7 +77,6 @@
     </control>
     <block>
       __ap = savedAP;
-      Message(0, "End CS_CATU___INSTANCE_INDEX___Capture @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 
@@ -92,7 +86,6 @@
       __var savedAP = __ap;
       __var status = 0x00000000;
 
-      Message(0, "Begin CS_CATU___INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
       __ap = CATU___INSTANCE_INDEX___AP; // Set AP
 
       // ETR must have completed its flush before CATU is disabled.
@@ -118,7 +111,6 @@
     </control>
     <block>
       __ap = savedAP;
-      Message(0, "End CS_CATU___INSTANCE_INDEX___Flush @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 
@@ -128,7 +120,6 @@
       __var savedAP = __ap;
       __var status = 0x00000000;
 
-      Message(0, "Begin CS_CATU___INSTANCE_INDEX___Stop @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
       __ap = CATU___INSTANCE_INDEX___AP; // Set AP
 
       // ETR must have completed its flush and any requested readback before CATU is disabled.
@@ -142,7 +133,6 @@
     </control>
     <block>
       __ap = savedAP;
-      Message(0, "End CS_CATU___INSTANCE_INDEX___Stop @0x%08X, AP 0x%08X", CATU___INSTANCE_INDEX___ADDRESS, CATU___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 

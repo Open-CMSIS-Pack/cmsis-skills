@@ -14,8 +14,6 @@
       __var savedAP     = __ap;
       __var cntcrValue  = 1;                              // CNTCR.EN=1
 
-      Message(0, "Begin CS_GTS___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", GTS___INSTANCE_INDEX___ADDRESS, GTS___INSTANCE_INDEX___AP);
-
       __ap   = GTS___INSTANCE_INDEX___AP;
       Write32(GTS___INSTANCE_INDEX___ADDRESS + 0x000, 0x0);                // Disable timestamp generator
     </block>
@@ -33,7 +31,6 @@
       Write32(GTS___INSTANCE_INDEX___ADDRESS + 0x000, cntcrValue);         // Write control bits and enable generator
 
       __ap = savedAP;
-      Message(0, "End CS_GTS___INSTANCE_INDEX___Configure @0x%08X, AP 0x%08X", GTS___INSTANCE_INDEX___ADDRESS, GTS___INSTANCE_INDEX___AP);
     </block>
   </sequence>
 </cmsis-pack-trace-snippet>
