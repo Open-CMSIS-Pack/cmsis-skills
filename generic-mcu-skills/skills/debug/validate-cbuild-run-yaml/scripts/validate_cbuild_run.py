@@ -96,6 +96,21 @@ def require_string(
         errors.append(f"{location}.{key}: expected a non-empty string")
 
 
+def require_expression(
+    value: dict[str, Any], key: str, location: str, errors: list[str]
+) -> None:
+    """A condition: a non-empty expression string or a number, such as `while: 1`."""
+    if key not in value:
+        return
+    item = value[key]
+    if isinstance(item, str):
+        valid = bool(item.strip())
+    else:
+        valid = isinstance(item, (int, float)) and not isinstance(item, bool)
+    if not valid:
+        errors.append(f"{location}.{key}: expected a non-empty expression string or a number")
+
+
 def validate_block(value: Any, location: str, errors: list[str]) -> None:
     block = require_mapping(value, location, errors)
     if block is None:
@@ -103,8 +118,8 @@ def validate_block(value: Any, location: str, errors: list[str]) -> None:
     reject_unknown_keys(block, BLOCK_KEYS, location, errors)
     require_string(block, "info", location, errors)
     require_string(block, "execute", location, errors)
-    require_string(block, "if", location, errors)
-    require_string(block, "while", location, errors)
+    require_expression(block, "if", location, errors)
+    require_expression(block, "while", location, errors)
 
     if "execute" in block and "blocks" in block:
         errors.append(f"{location}: 'execute' and nested 'blocks' are mutually exclusive")
@@ -289,7 +304,7 @@ def validate_processors(value: Any, errors: list[str]) -> None:
         if processor is None:
             continue
         reject_unknown_keys(processor, PROCESSOR_KEYS, item_location, errors)
-        require_string(processor, "pname", item_location, errors, required=True)
+        require_string(processor, "pname", item_location, errors, required=len(processors) > 1)
         require_string(processor, "reset-sequence", item_location, errors)
         pname = processor.get("pname")
         if isinstance(pname, str):

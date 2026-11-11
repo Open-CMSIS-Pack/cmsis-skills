@@ -1,5 +1,5 @@
 # generated with AI
-"""Regression tests for target-wide access-port identities."""
+"""Regression tests: access-port identities and the shapes of generated files."""
 
 import unittest
 
@@ -72,6 +72,43 @@ class AccessPortIdentityTests(unittest.TestCase):
         ports = [{"dpid": 0, "accessports": [{"apid": 7}]}]
         self.assertEqual(self.validate_ports(ports), [])
         self.assertEqual(self.validate_ports(ports), [])
+
+
+class GeneratedFileShapeTests(unittest.TestCase):
+    """Shapes that csolution writes into the files it generates."""
+
+    def validate_root(self, root):
+        return validate_document({"cbuild-run": root})
+
+    def test_single_processor_needs_no_pname(self):
+        topology = {
+            "debugports": [{"dpid": 0, "accessports": [{"apid": 0, "index": 1}]}],
+            "processors": [{"apid": 0}],
+        }
+        self.assertEqual(self.validate_root({"debug-topology": topology}), [])
+
+    def test_several_processors_need_pname(self):
+        topology = {"processors": [{"apid": 0}, {"pname": "cm33_core1", "apid": 1}]}
+        errors = self.validate_root({"debug-topology": topology})
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("processors[0]: missing required key 'pname'", errors[0])
+
+    def test_conditions_accept_expressions_and_numbers(self):
+        blocks = [
+            {"while": 1, "timeout": 50000},
+            {"if": "canReadPins", "blocks": [{"execute": "DAP_SWJ_Pins(0, 1, 0);"}]},
+            {"if": 0, "execute": "__dp = 0;"},
+        ]
+        sequences = [{"name": "ResetHardware", "blocks": blocks}]
+        self.assertEqual(self.validate_root({"debug-sequences": sequences}), [])
+
+    def test_conditions_reject_other_values(self):
+        for value in ("", "  ", True, None, []):
+            with self.subTest(value=value):
+                sequences = [{"name": "DebugDeviceUnlock", "blocks": [{"while": value}]}]
+                errors = self.validate_root({"debug-sequences": sequences})
+                self.assertEqual(len(errors), 1, errors)
+                self.assertIn(".while: expected a non-empty expression string or a number", errors[0])
 
 
 if __name__ == "__main__":
