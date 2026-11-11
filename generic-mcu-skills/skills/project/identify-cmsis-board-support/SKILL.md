@@ -13,7 +13,7 @@ description: Resolve a supplied board or device to exactly one verified CMSIS id
 ## Prerequisites & Context
 
 - **Expected input:** A user-supplied board or device name, which may be fuzzy. Manufacturer, board revision, and fitted MCU or SoC evidence should be included when available.
-- **Dependencies:** Access to CMSIS catalog data through `discover_board_or_device` when available, or the Keil Boards and Devices catalogs. An active CMSIS-Toolbox environment is optional for installed-pack cross-checks.
+- **Dependencies:** Access to CMSIS catalog data through the CMSIS Developer Assistant tool `cmsis_query` when available, or the Keil Boards and Devices catalogs. An active CMSIS-Toolbox environment is optional for installed-pack cross-checks.
 - **Portability:** Applies across MCU and SoC vendors when their board or device is represented in the referenced catalogs. It has no compiler, RTOS, debugger, or probe dependency.
 
 Collect when available:
@@ -31,62 +31,70 @@ board, but this skill does not depend on Zephyr.
 3. **Validation:** Check catalog results against the available authoritative board/device evidence and resolve every required identity before accepting support. Catalog membership alone does not verify a physical board or its fitted device.
 4. **Formatting:** Return the defined `BSP`, `DFP`, `AMBIGUOUS`, or `NO MATCH` result with exact identifiers, candidates when applicable, and catalog provenance.
 
-### Optional discovery tool
+### Optional catalog tool
 
-When available, use `discover_board_or_device` before manual catalog searches,
-or reuse a supplied report matching the requested board/device, revision and
-processor. It requires no existing project or debug session. Start with only
-`kind: board` or `kind: device` and the literal supplied name. In both examples
-below, replace `<literal user-supplied board name>` with the user's supplied
-name verbatim; never send the placeholder itself. For board-only input:
-
-```json
-{"kind":"board","name":"<literal user-supplied board name>"}
-```
-
-Omit unknown optional fields. If the exposed schema requires every field and
-allows `null`, use `null` for unknown optional values; the tool treats it as
-omission. Never use guesses, empty strings, `unspecified`, or `*`. For a client
-that requires every field, the equivalent board-only request is:
+When the CMSIS Developer Assistant tool `cmsis_query` is available, use it
+before manual catalog searches, or reuse a supplied result matching the
+requested board/device and revision. It reads the CMSIS Solution catalog (web
+and installed packs) and requires no existing project or debug session. Start
+with only `what` and the literal supplied name. In the examples below, replace
+the placeholder with the supplied name verbatim; never send the placeholder
+itself. For board input:
 
 ```json
-{"kind":"board","name":"<literal user-supplied board name>","vendor":null,"revision":null,"match":null,"device":null,"processor":null,"limit":null,"timeoutMs":null}
+{"what":"boards","name":"<literal user-supplied board name>"}
 ```
 
-If the exposed schema allows neither omission nor `null`, stop and report the
-schema mismatch; do not invent values or try wrappers to bypass it.
-Add vendor or revision only when supplied or
-independently verified. For board input, pass `device` only when independently
-established. Pass `processor` only for an explicitly selected, verified processor
-name, never a core type. A request to use the board as a project target means
-report remaining device/processor choices, not guess filters to resolve them.
-Use `match: contains` only to obtain candidates for a fuzzy name, then confirm
-an exact identity before accepting support.
+For device-only input, and for each device of a resolved board:
+
+```json
+{"what":"devices","name":"<device name>"}
+```
+
+`name` and `vendor` are case-insensitive regular expressions; `name` is tried
+against an entry's name and its id, and an unanchored pattern matches every
+entry that contains it. Escape regular-expression metacharacters of a literal
+name. Omit unknown optional fields. Never use guesses, empty strings,
+`unspecified`, or catch-all patterns such as `.*`. Add `vendor` only when
+supplied or independently verified. For board input, pass `device` (a pattern
+for a device the board carries) only when independently established. The tool
+has no revision or processor argument: a board `id` carries the revision
+(`<vendor>::<name>:<revision>`), and a device entry's `cores` names the cores,
+with the processor names of a multi-core device. A request to use the board as
+a project target means report remaining device/processor choices, not guess
+filters to resolve them. Use an unanchored pattern only to obtain candidates
+for a fuzzy name, then confirm an exact identity, for example with
+`^<exact name>$`, before accepting support.
 
 Before accepting a result, check the actual call arguments against the supplied
-or verified facts. If a call included unsupported filters, its result does not
-answer the intended query. Make at most one corrected request, omitting those
-fields or using schema-supported `null`. If that attempt fails to express the
-intended query, stop and report
-the invocation problem with the actual arguments and relevant response. Do not
-repeat the same request, claim the interface retained fields without evidence,
-or treat this as a catalog miss that justifies a public-catalog fallback.
+or verified facts. If a call included an unsupported or guessed filter, its
+result does not answer the intended query. Make at most one corrected request,
+omitting that filter. If that attempt fails to express the intended query, stop
+and report the invocation problem with the actual arguments and relevant
+response. Do not repeat the same request, or treat this as a catalog miss that
+justifies a public-catalog fallback.
 
-- `resolved`: reuse the reported identities and `bsp`/`dfp` without repeating
-  completed lookups. After the required physical-board evidence and identity
-  checks, return `BSP` when both packs are established, or `DFP` for DFP-only
-  support. Report whether the packs are shared or separate.
-- `ambiguous`: retain the choices and ask the user to resolve them. A truncated
-  candidate list is not the complete set; never select its first entry.
-- `unresolved` or `unavailable`: use the fallback below for missing facts.
-  Preserve the reported reason and issues. If support still
-  cannot be established, return `NO MATCH` with the missing fact or retrieval
-  failure; this does not assert that no CMSIS support exists.
+- `status: running`: the catalog is still loading. Repeat the same call; this
+  is not a catalog miss.
+- `total: 1`: reuse the returned `id` and `pack` without repeating completed
+  lookups. A board entry gives the BSP in `pack` and the devices the catalog
+  lists for the board in `devices`; a device entry gives the DFP in `pack`.
+  After the required physical-board evidence and identity checks, return `BSP`
+  when both packs are established, or `DFP` for DFP-only support. Report
+  whether the packs are shared or separate.
+- `total` greater than 1: retain the choices and ask the user to resolve them.
+  When `omitted` is not 0 the list is truncated (20 entries by default, `limit`
+  up to 100) and is not the complete set; never select its first entry.
+- `total: 0`, an entry without `pack` or `devices`, or a failed call: use the
+  fallback below for missing facts. Preserve the reported message. If support
+  still cannot be established, return `NO MATCH` with the missing fact or
+  retrieval failure; this does not assert that no CMSIS support exists.
 
-The report is catalog evidence, not physical-board verification. Its compatible
-devices do not prove which device is fitted. Catalog completeness is unknown;
-results do not establish global absence or uniqueness. Cite the tool and its returned exact
-identifiers as provenance; it supplies no catalog URLs, so do not invent them.
+The result is catalog evidence, not physical-board verification. A board
+entry's `devices` do not prove which device is fitted. Catalog completeness is
+unknown; results do not establish global absence or uniqueness. Cite the tool
+and its returned exact identifiers as provenance; it supplies no catalog URLs,
+so do not invent them.
 
 ### Catalog fallback
 
@@ -151,8 +159,8 @@ Report:
   whether it is the same pack as the BSP or a separate pack;
 - for a project target, any remaining device or processor choice, with exact
   returned identifiers; never invent a processor name for an unnamed entry;
-- catalog provenance: supporting URLs when retrieved, or the discovery tool
-  name and exact returned identifiers, with relevant issues;
+- catalog provenance: supporting URLs when retrieved, or the catalog tool
+  name and exact returned identifiers, with relevant notes;
 - for `AMBIGUOUS`, the exact candidate board identifiers or device `Dname` values,
   their distinguishing manufacturer/revision/device details and provenance,
   followed by one focused question asking the user to choose;
