@@ -12,11 +12,9 @@ Use a current `.agent-artifacts/<pdsc-stem>.debug-access-knowledge.md` record fr
 
 For each trace mode, build a source-to-sink route table before selecting components for that mode. Record the ordered route and classify every participating component as `source-side`, `funnel/glue`, or `sink/output`; a component may be recorded in more than one mode only with route-specific evidence. Record the configuration that makes the route operable: trace-clock source and enablement, pin-function and electrical configuration, path-selection controls, and the sink operating mode plus device-specific lifecycle constraints. Consider mux or function registers (including PFS where that is the vendor term), pad control, drive strength, slew rate, pull configuration, and voltage-domain settings when documented as relevant; record an authoritative `not applicable` decision when they are not required. Do not research generic CoreSight component lifecycle programming here; trace generator skills supply it from component templates. Do not select every discovered TPIU, funnel, or other trace component for every mode: include it only when the route table evidences its role and connection from that mode's source to its sink or output.
 
-Search linked and local documentation first:
+Search user-supplied and relevant workspace files first, then the DFP that declares the selected device, then the web, preferring official sources. Relevant files include device documentation, SDFs/SVDs, Pack metadata, trace scripts, and source; use board documentation only as supporting evidence for optional board configurations.
 
-- Datasheets, reference manuals, implementation guides, SDFs, SVDs, and vendor packs.
-- Trace scripts and relevant source code.
-- When available, a named board's manual or design guide, connector pin maps, and jumper settings as supporting evidence for optional board-specific configurations.
+Limit filesystem discovery to the workspace, explicitly supplied files, and the matching DFP. Locate the DFP only in configured CMSIS pack roots using the known device or pack identity, then inspect that package read-only; do not scan unrelated packs or other machine locations. If the DFP is ambiguous or required evidence remains missing after web research, ask the user to place the needed file in the workspace.
 
 When a cited vendor documentation URL is unreachable, run `$resolve-official-device-documentation` before recording it as unavailable. Copy its failed URL, retrieval result, search terms, and replacement official URL or the precise reason no official replacement was found into this record.
 

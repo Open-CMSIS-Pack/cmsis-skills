@@ -19,14 +19,15 @@ description: "Build a documentation-led, verifiable record of an existing SoC's 
 
 ## Execution Steps (Strict Workflow)
 
-1. **Analysis:** Locate the target PDSC, selected device subtree, affected processors, inherited/local debug definitions, and any existing owned access record. Stop if no device description exists.
-2. **Processing:** Collect only documented processor associations, connection models, DP/AP/APID paths, protocols, required non-sequence access definitions, and dormant-state decisions. When a cited vendor URL is unavailable, run `$resolve-official-device-documentation` and retain its returned resolution. Treat board evidence as out of scope; use `$board-debug-knowledge` for an explicitly requested board configuration.
+1. **Analysis:** Locate the target PDSC, selected device subtree, affected processors, and inherited/local debug definitions inside the current workspace or the related DFP; locate any existing owned access record only inside the current workspace. Stop if no device description exists.
+2. **Processing:** Start with user-supplied files and relevant files inside the current workspace, then inspect the DFP that declares the selected device when additional Pack evidence is needed. Collect only documented processor associations, connection models, DP/AP/APID paths, protocols, required non-sequence access definitions, and dormant-state decisions. Use web search for additional documentation when workspace and related-DFP evidence are insufficient. When a cited vendor URL is unavailable, run `$resolve-official-device-documentation` and retain its returned resolution. Treat board evidence as out of scope; use `$board-debug-knowledge` for an explicitly requested board configuration.
 3. **Validation:** Cite each fact with document edition/revision and section/page when known, or repository/version, path, and symbol/line for source. When documentation does not establish a required access observation, run `$pyocd-detect-debug-topology` and cite its result as supplementary evidence. Record unknown, conflicting, and unavailable facts without inference.
 4. **Formatting:** Create or update the owned record, present it for review as `DRAFT — AWAITING USER REVIEW`, and set `READY` only after user confirmation and sufficient evidence for the intended downstream work.
 
 ## Guardrails & Constraints (Strict Rules)
 
 - **No fabrication:** Do not invent addresses, identifiers, protocols, core associations, DP/AP paths, dormant-state requirements, patches, or access definitions.
+- **Local-source boundary:** Search only the workspace, explicitly supplied files, and the related DFP. Locate that DFP in configured CMSIS pack roots using the known device or pack identity, then inspect only the matching package read-only. Use the web or ask for a workspace file instead of scanning any other machine location or unrelated pack.
 - **Portability:** Do not introduce a device-family, debugger, toolchain, or runtime-target dependency unless authoritative inputs require it.
 - **Critical blockers:** Stop when the target PDSC, selected scope, processor association, or an access fact required by the intended downstream work is unavailable, contradictory, or insufficiently evidenced.
 - **Scope:** Establish access topology only. Return reset, unlock, authentication, boot, flash, processor-control, low-power, trace-routing, clock, pin, electrical, and sink facts to their domain knowledge skills.

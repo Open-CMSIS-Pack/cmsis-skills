@@ -18,14 +18,15 @@ description: Document a named board's supported debug and trace connector, jumpe
 
 ## Execution Steps (Strict Workflow)
 
-1. **Analysis:** Identify the board revision and the documents that establish its debug connector, trace connector, relevant jumpers, routing switches, fitted-device constraints, and pin map. Stop if the board identity or requested purpose is ambiguous.
-2. **Processing:** Record every documented selectable configuration that affects the requested debug or trace use. When a cited board source is unavailable, run `$resolve-official-device-documentation`. Distinguish a board-only routing choice from a device capability, and retain connector, jumper, switch, pin, and electrical notes only when documented.
+1. **Analysis:** Identify the board revision and the user-supplied or workspace documents that establish its debug connector, trace connector, relevant jumpers, routing switches, fitted-device constraints, and pin map. Inspect the related DFP only to confirm the fitted device and preserve its device-level options. Stop if the board identity or requested purpose is ambiguous.
+2. **Processing:** Record every documented selectable configuration that affects the requested debug or trace use. Use web search when workspace evidence is insufficient. When a cited board source is unavailable, run `$resolve-official-device-documentation`. Distinguish a board-only routing choice from a device capability, and retain connector, jumper, switch, pin, and electrical notes only when documented.
 3. **Validation:** Confirm each option against the board documentation and preserve all device-level Pack options. Derive a candidate runtime choice only when its values and supported default are documented; do not infer an unsupported choice.
 4. **Formatting:** Return the option inventory and candidate runtime choices in conversation. The calling knowledge skill owns any project artifact update.
 
 ## Guardrails & Constraints (Strict Rules)
 
 - **No fabrication:** Do not invent connector pins, jumper positions, routes, voltages, electrical settings, board revisions, variable values, or defaults.
+- **Local-source boundary:** Search only the workspace, explicitly supplied files, and the related DFP. Locate that DFP in configured CMSIS pack roots using the known fitted device, then inspect it read-only and only to confirm device identity or preserve device-level options. Use the web or ask for a workspace file instead of scanning any other machine location or unrelated pack.
 - **Portability:** Do not generalize a board wiring choice to another board or remove device-level Pack support because one board lacks a route.
 - **Critical blockers:** Stop when an option lacks authoritative board evidence, its board revision is incompatible with the request, or a proposed default is undocumented.
 - **Scope:** Establish board alternatives only. Do not establish SoC debug access, CoreSight topology, or implement a configuration choice.

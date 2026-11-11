@@ -1,0 +1,4 @@
+interface:
+  display_name: "CMSIS: Manage Debug Variables"
+  short_description: "Design PDSC or cbuild-run debug variables"
+  default_prompt: "Use $manage-debug-variables to add or revise a documented CMSIS debug-sequence variable."

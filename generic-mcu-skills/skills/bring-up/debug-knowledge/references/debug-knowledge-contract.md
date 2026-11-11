@@ -8,11 +8,9 @@ The Pack scope is device-level: device/SoC documentation establishes supported o
 
 Map the selected PDSC device subtree and affected processors from the access record. For the requested debug work, establish documented reset behavior and any required debug unlock, authentication, boot, flash, processor-control, and low-power behavior. Record reset source and type, reset scope, effects on the processor and debug connection, availability during reset, required recovery or reconnect action, and any required sequencing. Record an authoritative `not applicable` decision for a requested behavior that the device does not support.
 
-Search linked and local documentation first:
+Search user-supplied and relevant workspace files first, then the DFP that declares the selected device, then the web, preferring official sources. Relevant files include device documentation, SDFs/SVDs, Pack metadata, scripts, and source; use board documentation only for an explicitly requested board configuration.
 
-- Datasheets, reference manuals, implementation guides, SDFs, SVDs, and vendor packs.
-- Debug scripts and relevant source code.
-- A named board's manual or design guide, connector pin maps, and jumper settings only for an explicitly requested board-specific debug configuration.
+Limit filesystem discovery to the workspace, explicitly supplied files, and the matching DFP. Locate the DFP only in configured CMSIS pack roots using the known device or pack identity, then inspect that package read-only; do not scan unrelated packs or other machine locations. If the DFP is ambiguous or required evidence remains missing after web research, ask the user to place the needed file in the workspace.
 
 When a cited vendor documentation URL is unreachable, run `$resolve-official-device-documentation` before recording the source as unavailable. Copy its failed URL, retrieval result, search terms, and replacement official URL or precise unavailable reason into this record.
 
