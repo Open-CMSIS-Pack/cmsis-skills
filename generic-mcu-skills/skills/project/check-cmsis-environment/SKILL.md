@@ -140,6 +140,14 @@ demonstrated inconsistency, never merely for different package/component version
   follow the CMSIS-Toolbox compiler toolchain instructions.
 - When a requested vcpkg artifact is not already installed, return `FAIL` and ask
   the user to activate or repair the workspace environment outside this skill.
+- When a requested compiler or tool version is not installed and the local
+  vcpkg registry does not list it, do not report the version as unavailable:
+  the local copy of the registry can be out of date. Return `FAIL` with the
+  missing requirement and ask the user to update the registry first, then to
+  resolve the request again and to activate the environment. In VS Code that is
+  the command **Arm Tools: Update Tool Registry** of the Arm Tools Environment
+  Manager; on the command line it is `vcpkg-shell x-update-registry --all`.
+  Report a version as unavailable only when an updated registry does not list it.
 - When the solution-local `.cmsis/tools-environment.yml` has structural errors
   in consumed fields, identifies a different solution, or references missing
   paths, return `FAIL` and ask
@@ -158,7 +166,7 @@ is an optional setup method and is not required by this skill.
 - **No fabrication:** Do not invent artifact locations, tool versions, compiler registrations, or command results.
 - **Portability:** Do not add persistent host settings or assume a compiler family beyond the artifacts selected by the workspace.
 - **Critical blockers:** Stop when a selected artifact is absent or ambiguous, the selected export is unusable, `cbuild` is unavailable or from the wrong installation, or a demonstrated failure prevents reliable continuation. Report skipped checks and their reasons; version-label differences alone are not blockers.
-- **Evidence-bound reporting:** Distinguish confirmed absence from an unreadable or unchecked path. Do not infer workspace-wide export absence from a missing file at one location or prescribe repair without evidence.
+- **Evidence-bound reporting:** Distinguish confirmed absence from an unreadable or unchecked path. Do not infer workspace-wide export absence from a missing file at one location or prescribe repair without evidence. Do not conclude from a local vcpkg registry that has not been updated that a requested toolchain version does not exist.
 - **Scope:** Verify the existing environment only; do not install, update, repair, or reconfigure tools.
 - **Tone and style:** Respond factually and directly. Omit conversational filler.
 
@@ -185,6 +193,8 @@ Report:
   blockers separately from warnings and optional diagnostic failures;
 - each demonstrated missing requirement or inconsistency and the applicable
   setup reference when status is `FAIL`;
+- for a requested version that the local vcpkg registry does not list: that the
+  registry has to be updated before the version counts as unavailable;
 - scope limitation: discovery does not establish build success or license
   checkout.
 
@@ -192,5 +202,6 @@ Report:
 
 - [CMSIS-Toolbox build tools](https://open-cmsis-pack.github.io/cmsis-toolbox/build-tools/)
 - [CMSIS-Toolbox installation](https://open-cmsis-pack.github.io/cmsis-toolbox/installation/)
+- [CMSIS-Toolbox installation: vcpkg setup using CLI](https://open-cmsis-pack.github.io/cmsis-toolbox/installation/#vcpkg-setup-using-cli): `vcpkg-shell x-update-registry --all` updates the registries when an activation does not find a version
 - [CMSIS-Toolbox compiler toolchains](https://open-cmsis-pack.github.io/cmsis-toolbox/installation/#compiler-toolchains)
 - [Arm Tools Environment Manager](https://github.com/ARM-software/vscode-environment-manager)
