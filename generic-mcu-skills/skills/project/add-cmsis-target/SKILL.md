@@ -39,7 +39,7 @@ Complete this preflight before changing any project file:
 
 1. Locate the intended `*.csolution.yml`; do not choose among multiple plausible solutions without user direction.
 2. Inspect its `packs:` and `target-types:` plus referenced `*.cproject.yml` and relevant `*.clayer.yml` files. Preserve ordering, indentation, version policy, access-sequence style, and unrelated target settings.
-3. Determine whether other target types use a board layer. Evidence includes a project `layers:` entry of `type: Board`, a variable reference such as `$Board-Layer$`, or target-specific variables that bind that reference to a `*.clayer.yml` file. Do not infer a board-layer requirement merely from a directory named `Board`.
+3. Determine whether other target types use a board layer. Evidence includes a project `layers:` entry of `type: Board`, a variable reference such as `$Board-Layer$`, or target-specific variables that bind that reference to a `*.clayer.yml` file. Do not infer a board-layer requirement merely from a directory named `Board`. When an existing target binds its board-layer variable to an absolute path into the installed packs, to `${CMSIS_PACK_ROOT}`, or to `$Pack(...)$`, report it as a violation of the pack copy invariant. Repair it only when the user asks for it, by copying that layer as described in section 5.
 4. Invoke `identify-cmsis-board-support` with the supplied name and all locally or authoritatively available manufacturer, revision, and fitted-device evidence. Require exactly one verified board model/revision and one exact device `Dname` for board input, or exactly one device `Dname` for device-only input. Use only its verified exact board, device, BSP, and DFP identifiers. On `AMBIGUOUS`, present the exact candidates returned by that skill and ask the user to choose; do not select the first, closest, or installed-only result. On `NO MATCH`, stop and report the missing identity. Do not edit any project file until the exactly-one requirement is satisfied.
 
 ### 3. Add the target and packs
@@ -74,7 +74,7 @@ After the user selects one reported candidate:
        copied-from: ${CMSIS_PACK_ROOT}/<vendor>/<pack>/<version>/<reported-path>/
    ```
 
-   Preserve the actual variable key, filename, pack path, and version reported for the selected candidate. Never refer the active layer variable directly to `${CMSIS_PACK_ROOT}`.
+   Preserve the actual variable key, filename, pack path, and version reported for the selected candidate. Never refer the active layer variable to an absolute path into the installed packs, to `${CMSIS_PACK_ROOT}`, or to `$Pack(...)$`; `copied-from:` is the only place for the pack path.
 
 ### 6. Validate the result
 
@@ -88,7 +88,7 @@ After the user selects one reported candidate:
 
 - **No fabrication:** Do not invent board, device, pack, version, layer, connection, path, configuration field, command result, or schema result. Use catalog, pack, project, and tool output or report what is missing.
 - **No invented layer:** A missing or incompatible packaged layer is an unresolved requirement. Never synthesize a replacement as part of this skill.
-- **Pack copy invariant:** Copy the selected layer into the project and reference the local copy; never bind the project to a layer inside the installed pack.
+- **Pack copy invariant:** A packaged board layer is used through a copy in the project. Copy the complete layer directory of the exact pack version that `csolution` reports, bind the board-layer variable to the local file with a `$SolutionDir()$` path, and record the source with `copied-from:`. Never keep an absolute path into the installed packs, `${CMSIS_PACK_ROOT}`, or `$Pack(...)$` as the active layer reference; replace such a reference by a local copy.
 - **User choice:** Listing compatible layers does not authorize selecting one. Ask before copying a candidate or overwriting an existing destination.
 - **Hardware identity:** A target may be added only after each required board/device identity resolves to exactly one verified choice. Installed-pack results alone cannot prove uniqueness because they may omit online catalog candidates. Ask the user to resolve an `AMBIGUOUS` candidate list before editing.
 - **Schema integrity:** Use `csolution convert` with its default schema checking. Do not pass `--no-check-schema`, run a redundant schema-validation step, or alter a schema to make invalid project YAML pass.
