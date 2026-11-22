@@ -53,6 +53,7 @@ Use the [CMSIS-Toolbox software-layer format](https://open-cmsis-pack.github.io/
 - **Target selection:** Use `--active <target-type>` to select the target. Do not use context-pattern selection.
 - **Command integrity:** Require `csolution list layers` to support and use `--verbose`. Stop on any `csolution` command-line syntax or option-parsing error; do not retry with modified options.
 - **No selection or copy:** Identify candidates only. Do not choose one, copy pack content, bind a layer variable, edit project YAML, or create a replacement layer.
+- **Pack copy invariant:** A packaged board layer is used through a copy in the project. Copy the complete layer directory of the exact pack version that `csolution` reports, bind the board-layer variable to the local file with a `$SolutionDir()$` path, and record the source with `copied-from:`. Never keep an absolute path into the installed packs, `${CMSIS_PACK_ROOT}`, or `$Pack(...)$` as the active layer reference; replace such a reference by a local copy. This skill reports the source `path`; the caller makes the copy.
 - **Portability:** Do not add a device-family, toolchain, debugger, build-system, or RTOS assumption beyond the verified target, input project, or candidate metadata.
 - **Critical blockers:** Stop on a missing target, mismatch with the verified identity, unavailable required pack, unsupported required `csolution` option, `csolution` syntax or option-parsing error, failed layer query, missing candidate source, or ambiguous active context that cannot be resolved from the project.
 - **Scope:** Report compatible packaged board layers for one target context. Leave selection and integration to the caller.
@@ -62,7 +63,7 @@ Use the [CMSIS-Toolbox software-layer format](https://open-cmsis-pack.github.io/
 
 Return one of:
 
-- `MATCHES`: each compatible layer's description, pack and version, source `path`, layer `file`, optional `copy-to`, matching `for-board:` or `for-device:`, provided connections, and any additional requirements;
+- `MATCHES`: each compatible layer's description, pack and version, source `path`, layer `file`, optional `copy-to`, matching `for-board:` or `for-device:`, provided connections, and any additional requirements; state that the selected layer is to be copied into the project and not referenced inside the pack;
 - `NO MATCH`: the exact target, searched packs, required connections, command used, and the missing or incompatible requirements;
 - `NOT REQUIRED`: evidence that the target context has no board-layer slot or requirement.
 
