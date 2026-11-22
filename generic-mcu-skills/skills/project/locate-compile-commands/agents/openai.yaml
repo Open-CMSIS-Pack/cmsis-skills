@@ -1,0 +1,4 @@
+interface:
+  display_name: "CMSIS: Locate Compile Commands"
+  short_description: "Find compile_commands.json of a CMSIS solution"
+  default_prompt: "Use $locate-compile-commands to find the compilation database of my CMSIS solution."
