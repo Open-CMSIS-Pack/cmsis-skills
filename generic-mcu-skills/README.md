@@ -17,6 +17,7 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 | [`identify-cmsis-board-layer`](skills/project/identify-cmsis-board-layer/SKILL.md) | Identify packaged board layers compatible with a CMSIS target and its connections. | |
 | [`identify-cmsis-board-support`](skills/project/identify-cmsis-board-support/SKILL.md) | Identify a CMSIS BSP for a board or a DFP for its fitted device. | |
 | [`identify-zephyr-board`](skills/project/identify-zephyr-board/SKILL.md) | Resolve a physical board to its exact Zephyr board target and fitted MCU or SoC. | |
+| [`locate-compile-commands`](skills/project/locate-compile-commands/SKILL.md) | Locate the `compile_commands.json` of each project and context of a CMSIS solution from its build information. | |
 | [`start-zephyr-project`](skills/project/start-zephyr-project/SKILL.md) | Create an initial west-integrated CMSIS solution and validated ignore rules for a Zephyr-supported board. | <ul><li>Output: solution-local `.gitignore` via `configure-cmsis-gitignore`</li></ul> |
 
 ### Bring-up
