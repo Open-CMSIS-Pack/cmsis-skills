@@ -124,6 +124,40 @@ expects the selected board to define the `led0` devicetree alias. Keep
 `Debug` and `Release` build types. Add debugger, trace, and board-specific
 validation only in their corresponding later workflow steps.
 
+### Options for the west build
+
+When the request needs a Kconfig or CMake option that the template does not set,
+pass it to the build as `west-defs:` in `zephyr.csolution.yml`. Use the level
+that fits the option:
+
+| Level | Applies to | Use for |
+|---|---|---|
+| `projects:` - `west:` - `west-defs:` | Every build of the application | Options of the application itself |
+| `target-types:` - `west-defs:` | One target type | Board or target options, for example a devicetree overlay |
+| `build-types:` - `west-defs:` | One build type | Debug or optimization options, as in the template |
+
+Each entry is one `<NAME>: <value>` pair in CMake format. For the active target
+and build type, the definitions of the three levels are concatenated in the
+order `west:`, target type, build type and passed to `west build`. For example:
+
+```yaml
+  target-types:
+    - type: __TARGET_TYPE__
+      west-defs:
+        - DTC_OVERLAY_FILE: app.overlay
+  build-types:
+    - type: Debug
+      west-defs:
+        - CONFIG_DEBUG: y
+```
+
+Do not edit the `CMakeLists.txt` of the application, of Zephyr, of a Zephyr
+module, or of a pack to pass compiler or Zephyr configuration. Change the
+application's `CMakeLists.txt` only for what belongs to the application's build
+graph, such as its source files, and that `west-defs:` cannot express. Settings
+that the application needs in every build stay in `blinky/prj.conf`, as
+`CONFIG_GPIO=y` does.
+
 ## Validate the Generated Project
 
 Run the checks from the solution directory using the rendered target type from
@@ -178,6 +212,7 @@ retry a failed check with a modified command.
 - **No fabrication:** Do not invent or guess identifiers, paths, pack relationships, dependencies, compiler availability, or test results.
 - **Portability:** Do not add a device-, board-, compiler-, debugger-, or RTOS-specific setting unless the verified inputs require it; retain the conditional GCC-only configuration below.
 - **Critical blockers:** Stop before writing project files when a prerequisite fails, required values are absent or ambiguous, a compiler choice is unresolved, or either required validation command fails.
+- **West definitions first:** Pass Kconfig and CMake options of the Zephyr application as `west-defs:` in the `*.csolution.yml`. Do not edit a `CMakeLists.txt` of the application, of Zephyr, of a Zephyr module, or of a pack to pass compiler or Zephyr configuration; change the application's `CMakeLists.txt` only when the setting belongs to the application's build graph and `west-defs:` cannot express it.
 - **Scope:** Create and validate only the initial Blinky solution. Leave debugger, trace, board-specific validation, tool installation, and environment repair to later work.
 - **Tone and style:** Respond factually and directly. Omit conversational filler.
 
@@ -210,6 +245,7 @@ validation is blocked or fails, even when setup and compilation succeed.
 ## Validation Resources
 
 - [CMSIS-Toolbox west build system integration](https://open-cmsis-pack.github.io/cmsis-toolbox/build-overview/#west-build-system-integration)
+- [CMSIS-Toolbox CSolution Project Format: West Build](https://open-cmsis-pack.github.io/cmsis-toolbox/YML-Input-Format/#west-build): the `west:` node, `west-defs:` and the order in which its levels are combined
 - [CMSIS-Toolbox build tools](https://open-cmsis-pack.github.io/cmsis-toolbox/build-tools/)
 - [CMSIS-Zephyr solution example](https://github.com/Arm-Examples/CMSIS-Zephyr/blob/main/zephyr.csolution.yml)
 - [CMSIS-Zephyr Blinky configuration](https://github.com/Arm-Examples/CMSIS-Zephyr/blob/main/blinky/prj.conf)
