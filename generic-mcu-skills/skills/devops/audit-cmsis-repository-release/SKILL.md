@@ -28,7 +28,7 @@ description: Audit an existing CMSIS solution repository before public release. 
 - Inspect `.gitignore`, `.gitattributes`, local contribution guidance, and version-matched CMSIS Solution templates when available. Flag temporary personal directories, obsolete migration comments, blanket binary or YAML rules, and exceptions that no longer match repository policy.
 - Use `git check-ignore --no-index -v` on representative required inputs and disposable outputs. Use `git ls-files --cached --ignored --exclude-standard -- .` to find tracked files hidden by current policy.
 - Treat `*.csolution.yml`, project and layer inputs, pack locks, target configuration, intentionally committed prebuilt programs, and external MLOps contracts as potential repository inputs. Do not classify a file as disposable from its extension alone.
-- Locate `.vscode.d` drop-ins according to the repository's solution-local policy. Do not confuse them with workspace-owned `.vscode` settings, and do not impose either placement when the repository has no such policy.
+- Require each `.vscode.d` drop-in beside the `*.csolution.yml` it belongs to, as defined by the CMSIS Solution extension. A workspace-root `.vscode.d` is valid only for a solution at that root. Use `configure-cmsis-vscode-dropins` when relocation is authorized.
 - Flag root or solution-local editor files only when repository documentation, extension templates, or duplication evidence establishes that they are obsolete, generated, misplaced, or host-specific.
 
 ### Generated-artifact consistency checks
@@ -70,5 +70,6 @@ Provide a release-audit report containing:
 
 - [CMSIS-Toolbox repository contents](https://open-cmsis-pack.github.io/cmsis-toolbox/build-overview/#repository-contents): source, project, generated, and reproducibility artifacts.
 - [CMSIS-Toolbox output directory structure](https://open-cmsis-pack.github.io/cmsis-toolbox/build-overview/#output-directory-structure): default and configurable output locations.
+- [CMSIS Solution `.vscode.d` drop-ins](https://mdk-packs.github.io/vscode-cmsis-solution-docs/debug.html#vscoded-drop-ins): authoritative solution-local placement and merge behavior.
 - [Git check-ignore](https://git-scm.com/docs/git-check-ignore) and [Git attributes](https://git-scm.com/docs/gitattributes): observable ignore and line-ending policy checks.
 - Repository contribution guidance, generation documentation, extension templates, and test instructions are authoritative for repository-specific policy.

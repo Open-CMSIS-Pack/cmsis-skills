@@ -14,6 +14,7 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 | [`check-cmsis-environment`](skills/project/check-cmsis-environment/SKILL.md) | Verify the exported CMSIS tools environment, CMSIS-Toolbox, CMake, Ninja, and available compiler toolchains. | |
 | [`check-zephyr-environment`](skills/project/check-zephyr-environment/SKILL.md) | Verify a Zephyr workspace, its Python virtual environment, and venv-local west installation. | |
 | [`configure-cmsis-gitignore`](skills/project/configure-cmsis-gitignore/SKILL.md) | Configure shared ignore policy during solution authoring or repository setup, using verified outputs and preserving project inputs and drop-ins. | <ul><li>Output: solution-local `.gitignore`</li></ul> |
+| [`configure-cmsis-vscode-dropins`](skills/project/configure-cmsis-vscode-dropins/SKILL.md) | Place and validate solution-specific VS Code launch and task overrides beside their owning CMSIS solution files. | <ul><li>Output: solution-local `.vscode.d/launch.json` and/or `.vscode.d/tasks.json`</li></ul> |
 | [`identify-cmsis-board-layer`](skills/project/identify-cmsis-board-layer/SKILL.md) | Identify packaged board layers compatible with a CMSIS target and its connections. | |
 | [`identify-cmsis-board-support`](skills/project/identify-cmsis-board-support/SKILL.md) | Identify a CMSIS BSP for a board or a DFP for its fitted device. | |
 | [`identify-zephyr-board`](skills/project/identify-zephyr-board/SKILL.md) | Resolve a physical board to its exact Zephyr board target and fitted MCU or SoC. | |
