@@ -1,0 +1,4 @@
+interface:
+  display_name: "CMSIS: Audit Repository Release"
+  short_description: "Audit CMSIS repository publication readiness"
+  default_prompt: "Use $audit-cmsis-repository-release to perform a read-only publication audit of my CMSIS solution repository and report blockers, warnings, and validation evidence."

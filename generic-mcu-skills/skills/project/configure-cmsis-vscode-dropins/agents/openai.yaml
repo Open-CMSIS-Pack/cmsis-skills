@@ -1,0 +1,4 @@
+interface:
+  display_name: "CMSIS: Configure VS Code Drop-ins"
+  short_description: "Place CMSIS VS Code overrides by solution"
+  default_prompt: "Use $configure-cmsis-vscode-dropins to place and validate my CMSIS Solution launch and task overrides beside their owning *.csolution.yml files."

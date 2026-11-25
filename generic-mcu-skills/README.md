@@ -14,9 +14,11 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 | [`check-cmsis-environment`](skills/project/check-cmsis-environment/SKILL.md) | Verify the exported CMSIS tools environment, CMSIS-Toolbox, CMake, Ninja, and available compiler toolchains. | |
 | [`check-zephyr-environment`](skills/project/check-zephyr-environment/SKILL.md) | Verify a Zephyr workspace, its Python virtual environment, and venv-local west installation. | |
 | [`configure-cmsis-gitignore`](skills/project/configure-cmsis-gitignore/SKILL.md) | Configure shared ignore policy during solution authoring or repository setup, using verified outputs and preserving project inputs and drop-ins. | <ul><li>Output: solution-local `.gitignore`</li></ul> |
+| [`configure-cmsis-vscode-dropins`](skills/project/configure-cmsis-vscode-dropins/SKILL.md) | Place and validate solution-specific VS Code launch and task overrides beside their owning CMSIS solution files. | <ul><li>Output: solution-local `.vscode.d/launch.json` and/or `.vscode.d/tasks.json`</li></ul> |
 | [`identify-cmsis-board-layer`](skills/project/identify-cmsis-board-layer/SKILL.md) | Identify packaged board layers compatible with a CMSIS target and its connections. | |
 | [`identify-cmsis-board-support`](skills/project/identify-cmsis-board-support/SKILL.md) | Identify a CMSIS BSP for a board or a DFP for its fitted device. | |
 | [`identify-zephyr-board`](skills/project/identify-zephyr-board/SKILL.md) | Resolve a physical board to its exact Zephyr board target and fitted MCU or SoC. | |
+| [`prepare-cmsis-mlops-handoff`](skills/project/prepare-cmsis-mlops-handoff/SKILL.md) | Generate and validate the files exchanged between a CMSIS solution and an external MLOps system. | <ul><li>Input: generated `*.cbuild-mlops.yml` and referenced target configuration</li><li>Output: complete directory containing the declared `model.clayer` path</li></ul> |
 | [`start-zephyr-project`](skills/project/start-zephyr-project/SKILL.md) | Create an initial west-integrated CMSIS solution and validated ignore rules for a Zephyr-supported board. | <ul><li>Output: solution-local `.gitignore` via `configure-cmsis-gitignore`</li></ul> |
 
 ### Bring-up
@@ -53,6 +55,7 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 
 | Skill | Purpose | Artifacts |
 | --- | --- | --- |
+| [`audit-cmsis-repository-release`](skills/devops/audit-cmsis-repository-release/SKILL.md) | Perform a read-only publication audit of a CMSIS solution repository. | <ul><li>Output: release status, blockers, warnings, and validation evidence</li></ul> |
 | [`create-csolution-github-action`](skills/devops/create-csolution-github-action/SKILL.md) | Create build or optional FVP-test GitHub Actions for selected targets of the loaded CMSIS solution. | <ul><li>Output: `.github/workflows/build-&lt;solution-name&gt;.yml` or `test-&lt;solution-name&gt;.yml`</li></ul> |
 
 ### Pack

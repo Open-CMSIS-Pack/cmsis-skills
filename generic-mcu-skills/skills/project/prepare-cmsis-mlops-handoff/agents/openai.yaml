@@ -1,0 +1,4 @@
+interface:
+  display_name: "CMSIS: Prepare MLOps Handoff"
+  short_description: "Generate and validate a CMSIS MLOps handoff"
+  default_prompt: "Use $prepare-cmsis-mlops-handoff to generate and validate the external MLOps handoff for my selected CMSIS solution and target."
