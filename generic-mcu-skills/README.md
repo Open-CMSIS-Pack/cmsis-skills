@@ -17,6 +17,7 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 | [`identify-cmsis-board-layer`](skills/project/identify-cmsis-board-layer/SKILL.md) | Identify packaged board layers compatible with a CMSIS target and its connections. | |
 | [`identify-cmsis-board-support`](skills/project/identify-cmsis-board-support/SKILL.md) | Identify a CMSIS BSP for a board or a DFP for its fitted device. | |
 | [`identify-zephyr-board`](skills/project/identify-zephyr-board/SKILL.md) | Resolve a physical board to its exact Zephyr board target and fitted MCU or SoC. | |
+| [`prepare-cmsis-mlops-handoff`](skills/project/prepare-cmsis-mlops-handoff/SKILL.md) | Generate and validate the files exchanged between a CMSIS solution and an external MLOps system. | <ul><li>Input: generated `*.cbuild-mlops.yml` and referenced target configuration</li><li>Output: complete directory containing the declared `model.clayer` path</li></ul> |
 | [`start-zephyr-project`](skills/project/start-zephyr-project/SKILL.md) | Create an initial west-integrated CMSIS solution and validated ignore rules for a Zephyr-supported board. | <ul><li>Output: solution-local `.gitignore` via `configure-cmsis-gitignore`</li></ul> |
 
 ### Bring-up
@@ -53,6 +54,7 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 
 | Skill | Purpose | Artifacts |
 | --- | --- | --- |
+| [`audit-cmsis-repository-release`](skills/devops/audit-cmsis-repository-release/SKILL.md) | Perform a read-only publication audit of a CMSIS solution repository. | <ul><li>Output: release status, blockers, warnings, and validation evidence</li></ul> |
 | [`create-csolution-github-action`](skills/devops/create-csolution-github-action/SKILL.md) | Create build or optional FVP-test GitHub Actions for selected targets of the loaded CMSIS solution. | <ul><li>Output: `.github/workflows/build-&lt;solution-name&gt;.yml` or `test-&lt;solution-name&gt;.yml`</li></ul> |
 
 ### Pack
