@@ -1,0 +1,4 @@
+interface:
+  display_name: "Toolchain Migrator"
+  short_description: "Migrate CMSIS projects from AC6 to LLVM Clang"
+  default_prompt: "Use $toolchain-migrator to analyze this CMSIS project and propose an Arm Compiler 6 to LLVM Clang migration."

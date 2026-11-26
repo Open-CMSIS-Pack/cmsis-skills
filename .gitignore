@@ -2,3 +2,5 @@ vcpkg-configuration.json
 .vscode/settings.json
 .cmsis-dev/
 **/__pycache__/
+generic-mcu-skills/skills/project/.DS_Store
+generic-mcu-skills/skills/project/toolchain-migration/.DS_Store
