@@ -1,0 +1,3 @@
+interface:
+  display_name: "CMSIS: Check macOS FVP Availability"
+  short_description: "Check required FVP models on macOS"

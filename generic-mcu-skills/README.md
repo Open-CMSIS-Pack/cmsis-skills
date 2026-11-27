@@ -12,6 +12,7 @@ This cmsis-skills collection contains skills for AI agents that create, bring up
 | --- | --- | --- |
 | [`add-cmsis-target`](skills/project/add-cmsis-target/SKILL.md) | Add a verified board or device target and offer compatible packaged board layers. | |
 | [`check-cmsis-environment`](skills/project/check-cmsis-environment/SKILL.md) | Verify the exported CMSIS tools environment, CMSIS-Toolbox, CMake, Ninja, and available compiler toolchains. | |
+| [`check-macos-fvp-availability`](skills/project/check-macos-fvp-availability/SKILL.md) | Check whether the selected CMSIS target needs a missing FVP on macOS and offer setup through FVPs-on-Mac. | |
 | [`check-zephyr-environment`](skills/project/check-zephyr-environment/SKILL.md) | Verify a Zephyr workspace, its Python virtual environment, and venv-local west installation. | |
 | [`configure-cmsis-gitignore`](skills/project/configure-cmsis-gitignore/SKILL.md) | Configure shared ignore policy during solution authoring or repository setup, using verified outputs and preserving project inputs and drop-ins. | <ul><li>Output: solution-local `.gitignore`</li></ul> |
 | [`identify-cmsis-board-layer`](skills/project/identify-cmsis-board-layer/SKILL.md) | Identify packaged board layers compatible with a CMSIS target and its connections. | |
